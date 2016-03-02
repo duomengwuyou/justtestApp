@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ly_main_weixin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#fcfcfc"
+    android:orientation="vertical" >
+
+    <com.zboss.suiyuan.newspic.RefreshListView
+        android:id="@+id/cards_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="20dp"
+        android:layout_marginBottom="5dp"
+       	android:layout_marginLeft="5dp"
+       	android:layout_marginRight="5dp"
+        android:scrollbarStyle="outsideOverlay"
+        tools:listitem="@layout/list_item_card" >
+    </com.zboss.suiyuan.newspic.RefreshListView>
+
+</LinearLayout>
