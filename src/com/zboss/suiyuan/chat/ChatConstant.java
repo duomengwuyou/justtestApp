@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatConstant {
-    public static final String IP_PORT = "http://172.20.200.204:8890/";
+    public static final String IP_PORT = "http://172.20.200.196:8890/";
     public static final String DEFAULT_STR = "";
     
     

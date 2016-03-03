@@ -18,6 +18,7 @@ import com.zboss.suiyuan.MainTab01;
 import com.zboss.suiyuan.PushApplication;
 import com.zboss.suiyuan.bean.ChatMessage;
 import com.zboss.suiyuan.bean.Message;
+import com.zboss.suiyuan.enums.TitleEnum;
 
 /*
  * Push消息处理receiver。请编写您需要的回调函数， 一般来说： onBind是必须的，用来处理startWork返回值；
@@ -72,7 +73,6 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
             PushApplication.YOUR_CHANNEL_ID = channelId;
             PushApplication.APP_ID = appid;
             PushApplication.USER_ID = userId;
-
         }
     }
 
@@ -105,12 +105,29 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
 
         // 解析获取对话内容
         String chatContent = "等会哈，有点忙";
+        String title = "none";
         if (!TextUtils.isEmpty(message)) {
             JSONObject customJson = null;
             try {
                 customJson = new JSONObject(message);
                 if (!customJson.isNull("description")) {
                     chatContent = customJson.getString("description");
+                }
+                
+                if(!customJson.isNull("title")) {
+                    title = customJson.getString("title");
+                    // 别人和自己建立了连接
+                    if(title.equals(TitleEnum.BUILD_CONNECTION.getStatus())) {
+                        PushApplication.YOUR_CHANNEL_ID = chatContent;
+                        PushApplication.buildConOrNot = true;
+                        chatContent = "系统提示：已经联系上有缘人，你们可以聊天了！";
+                        MainTab01.buildCon.setText("断开");
+                    } else if(title.equals(TitleEnum.CLOSE_CONNECTION.getStatus())) {
+                        PushApplication.YOUR_CHANNEL_ID = null;
+                        PushApplication.buildConOrNot = false;
+                        chatContent = "系统提示：你们缘分已尽，请寻找其他有缘人！";
+                        MainTab01.buildCon.setText("连接");
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.android.volley.Request;
@@ -17,6 +18,7 @@ import com.zboss.suiyuan.bean.ChatMessage;
 import com.zboss.suiyuan.bean.Message;
 import com.zboss.suiyuan.chat.ChatMessageAdapter;
 import com.zboss.suiyuan.chat.ConnectServer;
+import com.zboss.suiyuan.enums.TitleEnum;
 import com.zboss.suiyuan.utils.SendMsgAsyncTask;
 
 import android.app.ProgressDialog;
@@ -38,7 +40,7 @@ public class MainTab01 extends Fragment {
 
     private EditText mMsgInput;
     private Button mMsgSend;
-    private Button buildCon;
+    public static Button buildCon;
 
     public static ListView mChatMessagesListView;
     public static List<ChatMessage> mDatas = new ArrayList<ChatMessage>();
@@ -133,7 +135,7 @@ public class MainTab01 extends Fragment {
         buildCon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(PushApplication.buildConOrNot == false) {
+                if (PushApplication.buildConOrNot == false) {
                     buildConnection();
                 } else {
                     closeConnection();
@@ -148,8 +150,7 @@ public class MainTab01 extends Fragment {
         String JSONDataUrl =
                 ConnectServer.getUploadInfoPath(PushApplication.APP_ID, PushApplication.USER_ID,
                         PushApplication.MY_CHANNEL_ID);
-        final ProgressDialog progressDialog =
-                ProgressDialog.show(getActivity(), "寻找有缘人...", "请稍等...", true, false);
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "寻找有缘人...", "请稍等...", true, false);
 
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(Request.Method.GET, JSONDataUrl, null, new Response.Listener<JSONObject>() {
@@ -157,17 +158,51 @@ public class MainTab01 extends Fragment {
                     public void onResponse(JSONObject response) {
                         // 处理返回的JSON数据
                         if (progressDialog.isShowing() && progressDialog != null) {
-                            Toast.makeText(getActivity(), "建立连接成功", Toast.LENGTH_SHORT).show();
-                            PushApplication.YOUR_CHANNEL_ID = PushApplication.MY_CHANNEL_ID;
-                            PushApplication.buildConOrNot = true;
-                            buildCon.setText("断开");
-                            progressDialog.dismiss();
+                            try {
+                                int status = response.getInt("status");
+                                // 排队
+                                if (status == -1) {
+                                    Toast.makeText(getActivity(), "恭喜你，已加入聊天队列，等待有缘人联系你吧！", Toast.LENGTH_SHORT).show();
+                                    PushApplication.YOUR_CHANNEL_ID = null;
+                                    PushApplication.buildConOrNot = false;
+                                    progressDialog.dismiss();
+                                    // 找到了
+                                } else if (status == 1) {
+                                    String loveChannel = response.getString("loveChannelId");
+                                    Toast.makeText(getActivity(), "恭喜你，找到了有缘人，可以开始对话了！", Toast.LENGTH_SHORT).show();
+                                    PushApplication.YOUR_CHANNEL_ID = loveChannel;
+                                    PushApplication.buildConOrNot = true;
+                                    buildCon.setText("断开");
+                                    progressDialog.dismiss();
+
+                                    // 马上给对方发送消息
+                                    Message message = new Message(PushApplication.MY_CHANNEL_ID, PushApplication.YOUR_CHANNEL_ID);
+                                    message.setTitle(TitleEnum.BUILD_CONNECTION.getStatus());
+                                    // 发送消息
+                                    SendMsgAsyncTask newTask =
+                                            new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
+                                    newTask.send();
+
+                                } else {
+                                    Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
+                                    PushApplication.YOUR_CHANNEL_ID = null;
+                                    PushApplication.buildConOrNot = false;
+                                    progressDialog.dismiss();
+                                }
+
+                            } catch (Exception e) {
+                                Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
+                                PushApplication.YOUR_CHANNEL_ID = null;
+                                PushApplication.buildConOrNot = false;
+                                progressDialog.dismiss();
+                            }
+
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError arg0) {
-                        Toast.makeText(getActivity(), "建立连接失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
                         PushApplication.YOUR_CHANNEL_ID = null;
                         PushApplication.buildConOrNot = false;
                         progressDialog.dismiss();
@@ -175,14 +210,13 @@ public class MainTab01 extends Fragment {
                 });
         requestQueue.add(jsonObjectRequest);
     }
-    
+
     private void closeConnection() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         String JSONDataUrl =
                 ConnectServer.getCloseCon(PushApplication.APP_ID, PushApplication.USER_ID,
                         PushApplication.MY_CHANNEL_ID);
-        final ProgressDialog progressDialog =
-                ProgressDialog.show(getActivity(), "断开缘分...", "请稍等...", true, false);
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "断开缘分...", "请稍等...", true, false);
 
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(Request.Method.GET, JSONDataUrl, null, new Response.Listener<JSONObject>() {
@@ -190,6 +224,14 @@ public class MainTab01 extends Fragment {
                     public void onResponse(JSONObject response) {
                         // 处理返回的JSON数据
                         if (progressDialog.isShowing() && progressDialog != null) {
+                            // 马上给对方发送消息
+                            Message message = new Message(PushApplication.MY_CHANNEL_ID, PushApplication.YOUR_CHANNEL_ID);
+                            message.setTitle(TitleEnum.CLOSE_CONNECTION.getStatus());
+                            // 发送消息
+                            SendMsgAsyncTask newTask =
+                                    new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
+                            newTask.send();
+                            
                             Toast.makeText(getActivity(), "断开连接成功", Toast.LENGTH_SHORT).show();
                             PushApplication.YOUR_CHANNEL_ID = null;
                             PushApplication.buildConOrNot = false;
