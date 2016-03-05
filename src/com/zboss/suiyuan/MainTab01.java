@@ -49,6 +49,8 @@ public class MainTab01 extends Fragment {
     private View rootView;
 
     private PushApplication mApplication;
+    
+    private static RequestQueue requestQueue;
 
     // private User mFromUser;
     // private UserDB mUserDB;
@@ -61,6 +63,7 @@ public class MainTab01 extends Fragment {
         rootView = inflater.inflate(R.layout.main_tab_01, container, false);
         initView();
         initEvent();
+        requestQueue = Volley.newRequestQueue(getActivity());
 
         if (mAdapter == null) {
             mAdapter = new ChatMessageAdapter(getActivity(), mDatas);
@@ -109,7 +112,7 @@ public class MainTab01 extends Fragment {
 
                 // 界面上构建信息
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setComing(false);
+                chatMessage.setIsComing(1);
                 chatMessage.setDate(new Date());
                 chatMessage.setMessage(msg);
                 chatMessage.setNickname("寻缘人");
@@ -135,6 +138,11 @@ public class MainTab01 extends Fragment {
         buildCon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 清空数据
+                mDatas.clear();
+                mAdapter.notifyDataSetChanged();
+                mMsgInput.setText("");
+
                 if (PushApplication.buildConOrNot == false) {
                     buildConnection();
                 } else {
@@ -146,7 +154,6 @@ public class MainTab01 extends Fragment {
     }
 
     private void buildConnection() {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         String JSONDataUrl =
                 ConnectServer.getUploadInfoPath(PushApplication.APP_ID, PushApplication.USER_ID,
                         PushApplication.MY_CHANNEL_ID);
@@ -168,21 +175,14 @@ public class MainTab01 extends Fragment {
                                     progressDialog.dismiss();
                                     // 找到了
                                 } else if (status == 1) {
-                                    String loveChannel = response.getString("loveChannelId");
-                                    Toast.makeText(getActivity(), "恭喜你，找到了有缘人，可以开始对话了！", Toast.LENGTH_SHORT).show();
-                                    PushApplication.YOUR_CHANNEL_ID = loveChannel;
-                                    PushApplication.buildConOrNot = true;
-                                    buildCon.setText("断开");
                                     progressDialog.dismiss();
-
-                                    // 马上给对方发送消息
-                                    Message message = new Message(PushApplication.MY_CHANNEL_ID, PushApplication.YOUR_CHANNEL_ID);
-                                    message.setTitle(TitleEnum.BUILD_CONNECTION.getStatus());
-                                    // 发送消息
-                                    SendMsgAsyncTask newTask =
-                                            new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
-                                    newTask.send();
-
+                                    
+                                    // 数据有误
+                                } else if(status == 0) {
+                                    Toast.makeText(getActivity(), "抱歉，认证信息有误，请重启软件或者确定网络连接！", Toast.LENGTH_SHORT).show();
+                                    PushApplication.YOUR_CHANNEL_ID = null;
+                                    PushApplication.buildConOrNot = false;
+                                    progressDialog.dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
                                     PushApplication.YOUR_CHANNEL_ID = null;
@@ -212,7 +212,6 @@ public class MainTab01 extends Fragment {
     }
 
     private void closeConnection() {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         String JSONDataUrl =
                 ConnectServer.getCloseCon(PushApplication.APP_ID, PushApplication.USER_ID,
                         PushApplication.MY_CHANNEL_ID);
@@ -224,14 +223,6 @@ public class MainTab01 extends Fragment {
                     public void onResponse(JSONObject response) {
                         // 处理返回的JSON数据
                         if (progressDialog.isShowing() && progressDialog != null) {
-                            // 马上给对方发送消息
-                            Message message = new Message(PushApplication.MY_CHANNEL_ID, PushApplication.YOUR_CHANNEL_ID);
-                            message.setTitle(TitleEnum.CLOSE_CONNECTION.getStatus());
-                            // 发送消息
-                            SendMsgAsyncTask newTask =
-                                    new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
-                            newTask.send();
-                            
                             Toast.makeText(getActivity(), "断开连接成功", Toast.LENGTH_SHORT).show();
                             PushApplication.YOUR_CHANNEL_ID = null;
                             PushApplication.buildConOrNot = false;

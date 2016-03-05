@@ -3,6 +3,13 @@ package com.zboss.suiyuan;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,15 +18,27 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.jauker.widget.BadgeView;
+import com.zboss.suiyuan.bean.Message;
+import com.zboss.suiyuan.chat.ConnectServer;
+import com.zboss.suiyuan.enums.TitleEnum;
+import com.zboss.suiyuan.utils.SendMsgAsyncTask;
 
 public class MainActivity extends FragmentActivity {
     private ViewPager mViewPager;
@@ -39,6 +58,9 @@ public class MainActivity extends FragmentActivity {
     private BadgeView mBadgeViewforTongxunlu;
 
     private ImageView mTabLine;
+
+    // 设置图表
+    private ImageView setImage;
 
     public static int currentIndex;
     private int screenWidth;
@@ -146,7 +168,7 @@ public class MainActivity extends FragmentActivity {
                 return;
             }
         });
-        
+
         mFaxian.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,7 +176,7 @@ public class MainActivity extends FragmentActivity {
                 return;
             }
         });
-        
+
         mTongxunlu.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,7 +184,7 @@ public class MainActivity extends FragmentActivity {
                 return;
             }
         });
-        
+
         // 默认选择第二个标签
         mViewPager.setCurrentItem(1);
     }
@@ -211,5 +233,72 @@ public class MainActivity extends FragmentActivity {
         mBadgeViewforFaxian = new BadgeView(this);
         mBadgeViewforLiaotian = new BadgeView(this);
         mBadgeViewforTongxunlu = new BadgeView(this);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && event.getRepeatCount() == 0) {
+            dialog_Exit(MainActivity.this);
+        }
+        return false;
+    }
+
+    public void dialog_Exit(Context context) {
+        AlertDialog.Builder builder = new Builder(context);
+        builder.setMessage("确定要退出吗?");
+        builder.setTitle("提示");
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                // 关闭连接
+                closeConnection();
+            }
+        });
+
+        builder.setNegativeButton("取消", new android.content.DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    // 退出时关闭连接
+    private void closeConnection() {
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        String JSONDataUrl =
+                ConnectServer.getCloseCon(PushApplication.APP_ID, PushApplication.USER_ID,
+                        PushApplication.MY_CHANNEL_ID);
+
+        JsonObjectRequest jsonObjectRequest =
+                new JsonObjectRequest(Request.Method.GET, JSONDataUrl, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // 处理返回的JSON数据
+                        Message message = new Message(PushApplication.MY_CHANNEL_ID, PushApplication.YOUR_CHANNEL_ID);
+                        message.setTitle(TitleEnum.CLOSE_CONNECTION.getStatus());
+                        // 发送消息
+                        PushApplication application = (PushApplication) getApplication();
+                        SendMsgAsyncTask newTask =
+                                new SendMsgAsyncTask(application.getGson().toJson(message),
+                                        PushApplication.YOUR_CHANNEL_ID);
+                        newTask.send();
+
+                        PushApplication.YOUR_CHANNEL_ID = null;
+                        PushApplication.buildConOrNot = false;
+                        // 关闭应用
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError arg0) {
+                        PushApplication.YOUR_CHANNEL_ID = null;
+                        PushApplication.buildConOrNot = false;
+                        // 关闭应用
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
     }
 }

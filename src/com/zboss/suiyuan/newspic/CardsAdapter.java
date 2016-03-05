@@ -3,7 +3,9 @@ package com.zboss.suiyuan.newspic;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -35,13 +37,35 @@ public class CardsAdapter extends BaseAdapter {
     private final OnClickListener itemButtonClickListener;
     private final Context context;
     
-    private AsyncImageLoader asyncImageLoader;
+    private static RequestQueue requestQueue;
+    private static LruCache<String, Bitmap> lruCache;
+    private static ImageCache imageCache;
+    private static ImageLoader imageLoader;
 
+
+    private static Map<String, Boolean> picMap = new HashMap<String, Boolean>();
 
     public CardsAdapter(Context context, List<PictureObj> items, OnClickListener itemButtonClickListener) {
         this.context = context;
         this.items = items;
         this.itemButtonClickListener = itemButtonClickListener;
+        requestQueue = Volley.newRequestQueue(context);
+        lruCache = new LruCache<String, Bitmap>(100);
+        
+        imageCache = new ImageCache() {
+            @Override
+            public void putBitmap(String key, Bitmap value) {
+                lruCache.put(key, value);
+            }
+
+            @Override
+            public Bitmap getBitmap(String key) {
+                return lruCache.get(key);
+            }
+        };
+        
+        imageLoader = new ImageLoader(requestQueue, imageCache);
+
     }
 
     public List<PictureObj> getItems() {
@@ -74,14 +98,9 @@ public class CardsAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_item_card, null);
-            View listConvertView = LayoutInflater.from(context).inflate(R.layout.main_tab_02, null);
-              
-
             holder = new ViewHolder();
             holder.Card_Title = (TextView) convertView.findViewById(R.id.Card_Title);
             holder.Card_Pic = (NetworkImageView) convertView.findViewById(R.id.Card_Pic);
-            holder.listView = (ListView) listConvertView.findViewById(R.id.cards_list);
-            asyncImageLoader = new AsyncImageLoader();
             //holder.itemButton1 = (Button) convertView.findViewById(R.id.list_item_card_button_1);
             //holder.itemButton2 = (Button) convertView.findViewById(R.id.list_item_card_button_2);
             convertView.setTag(holder);
@@ -95,6 +114,7 @@ public class CardsAdapter extends BaseAdapter {
         // Load the image and set it on the ImageView
         String imageUrl = items.get(position).getPic();
         showImageByNetworkImageView(holder.Card_Pic, imageUrl);
+        
 
         // if (itemButtonClickListener != null) {
         // holder.itemButton1.setOnClickListener(itemButtonClickListener);
@@ -126,7 +146,6 @@ public class CardsAdapter extends BaseAdapter {
     private static class ViewHolder {
         private TextView Card_Title;
         private NetworkImageView Card_Pic;
-        private ListView listView;
         // private Button itemButton1;
         // private Button itemButton2;
     }
@@ -135,24 +154,8 @@ public class CardsAdapter extends BaseAdapter {
      * 利用NetworkImageView显示网络图片
      */
     private void showImageByNetworkImageView(NetworkImageView mNetworkImageView, String imageUrl) {
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        final LruCache<String, Bitmap> lruCache = new LruCache<String, Bitmap>(
-                20);
-        ImageCache imageCache = new ImageCache() {
-            @Override
-            public void putBitmap(String key, Bitmap value) {
-                lruCache.put(key, value);
-            }
-
-            @Override
-            public Bitmap getBitmap(String key) {
-                return lruCache.get(key);
-            }
-        };
-        ImageLoader imageLoader = new ImageLoader(requestQueue, imageCache);
         mNetworkImageView.setTag("url");
         mNetworkImageView.setImageUrl(imageUrl, imageLoader);
     }
-
 
 }

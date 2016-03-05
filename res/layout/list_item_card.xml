@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="fill_parent"
     android:background="@drawable/picshape"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/Card_Title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_margin="5dp"
         android:textSize="20sp"
         android:textColor="@color/black"
@@ -17,11 +17,11 @@
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/Card_Pic"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:layout_below="@id/Card_Title"
-        android:src="@drawable/h4" />
+        android:src="@drawable/icon" />
 
     <!-- 下部的按钮
     <LinearLayout

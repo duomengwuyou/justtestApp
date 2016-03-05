@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class ChatMessage {
     private String message;
-    private boolean isComing;
+    private int isComing; // 1 发出 2 收到 3系统
     private Date date;
     private String userId;
     private int icon;
@@ -21,7 +21,7 @@ public class ChatMessage {
     public ChatMessage() {
     }
 
-    public ChatMessage(String message, boolean isComing, String userId, int icon, String nickname, boolean readed,
+    public ChatMessage(String message, int isComing, String userId, int icon, String nickname, boolean readed,
             String dateStr) {
         super();
         this.message = message;
@@ -53,11 +53,11 @@ public class ChatMessage {
         this.message = message;
     }
 
-    public boolean isComing() {
+    public int getIsComing() {
         return isComing;
     }
 
-    public void setComing(boolean isComing) {
+    public void setIsComing(int isComing) {
         this.isComing = isComing;
     }
 

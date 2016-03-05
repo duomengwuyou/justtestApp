@@ -106,6 +106,8 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         // 解析获取对话内容
         String chatContent = "等会哈，有点忙";
         String title = "none";
+        // 默认为收到信息
+        int isComing = 2;
         if (!TextUtils.isEmpty(message)) {
             JSONObject customJson = null;
             try {
@@ -120,13 +122,15 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                     if(title.equals(TitleEnum.BUILD_CONNECTION.getStatus())) {
                         PushApplication.YOUR_CHANNEL_ID = chatContent;
                         PushApplication.buildConOrNot = true;
-                        chatContent = "系统提示：已经联系上有缘人，你们可以聊天了！";
+                        chatContent = "恭喜，已经联系上有缘人，你们可以聊天了！";
                         MainTab01.buildCon.setText("断开");
+                        isComing = 3;
                     } else if(title.equals(TitleEnum.CLOSE_CONNECTION.getStatus())) {
                         PushApplication.YOUR_CHANNEL_ID = null;
                         PushApplication.buildConOrNot = false;
-                        chatContent = "系统提示：你们缘分已尽，请寻找其他有缘人！";
+                        chatContent = "抱歉，对方已断开，你们缘分已尽，请寻找其他有缘人！";
                         MainTab01.buildCon.setText("连接");
+                        isComing = 3;
                     }
                 }
             } catch (JSONException e) {
@@ -136,8 +140,13 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
 
         // Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setComing(true);
-        chatMessage.setDate(new Date());
+        chatMessage.setIsComing(isComing);
+        if(isComing == 3) {
+            chatMessage.setDate(new Date());
+            chatMessage.setDateStr(chatContent);
+        } else {
+            chatMessage.setDate(new Date());
+        }
         chatMessage.setMessage(chatContent);
         chatMessage.setNickname("有缘人");
         chatMessage.setReaded(true);

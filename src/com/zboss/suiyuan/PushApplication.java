@@ -44,7 +44,7 @@ public class PushApplication extends Application {
 
     private UserDB userDB;
     private MessageDB messageDB;
-    
+
     // 自己和对方的channelid
     public static String MY_CHANNEL_ID = "";
     public static String YOUR_CHANNEL_ID = "";
@@ -52,6 +52,8 @@ public class PushApplication extends Application {
     public static String USER_ID = "";
     // 是否建立了会话连接
     public static boolean buildConOrNot = false;
+    // 图片类型
+    public static Integer DISPLAY_TYPE = null;
 
     public synchronized static PushApplication getInstance() {
         return mApplication;

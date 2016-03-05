@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ly_main_weixin"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:background="#fcfcfc"
     android:orientation="vertical" >
@@ -10,7 +10,7 @@
     <com.zboss.suiyuan.newspic.RefreshListView
         android:id="@+id/cards_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="20dp"

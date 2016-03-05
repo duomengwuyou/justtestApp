@@ -83,4 +83,13 @@ public class ConnectServer {
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.CLOSE_CON) + parameters;
         return path;
     }
+    
+    public static String getMoreImages(Integer displayType) {
+        String parameters = "";
+        if(displayType != null) {
+            parameters = "displayType=" + displayType;
+        }
+        String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.MORE_IMAGE) + parameters;
+        return path;
+    }
 }
