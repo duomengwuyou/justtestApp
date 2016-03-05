@@ -16,10 +16,10 @@
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/Card_Pic"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:layout_below="@id/Card_Title"
         android:src="@drawable/icon" />
 

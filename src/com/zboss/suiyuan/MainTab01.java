@@ -47,15 +47,8 @@ public class MainTab01 extends Fragment {
     public static ChatMessageAdapter mAdapter;
 
     private View rootView;
-
     private PushApplication mApplication;
-    
     private static RequestQueue requestQueue;
-
-    // private User mFromUser;
-    // private UserDB mUserDB;
-    // private SharePreferenceUtil mSpUtil;
-
     private Gson mGson;
 
     @Override

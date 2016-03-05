@@ -23,8 +23,6 @@ public class RefreshListView extends ListView implements OnScrollListener {
 	private static final String TAG = "RefreshListView";
 	private int firstVisibleItemPosition; 
 	private int downY; 
-	private int headerViewHeight; 
-	private View headerView; 
 
 	private final int DOWN_PULL_REFRESH = 0;
 	private final int RELEASE_REFRESH = 1; 
@@ -33,11 +31,6 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
 	private Animation upAnimation; 
 	private Animation downAnimation; 
-
-	private ImageView ivArrow;
-	private ProgressBar mProgressBar;
-	private TextView tvLastUpdateTime; 
-	private TextView tvState;
 
 	private OnRefreshListener mOnRefershListener;
 	private boolean isScrollToBottom; 
@@ -61,24 +54,7 @@ public class RefreshListView extends ListView implements OnScrollListener {
 	}
 
 	private void initHeaderView() {
-		headerView = View.inflate(getContext(), R.layout.listview_header, null);
-		ivArrow = (ImageView) headerView.findViewById(R.id.iv_listview_header_arrow);
-		mProgressBar = (ProgressBar) headerView.findViewById(R.id.pb_listview_header);
-		tvState = (TextView) headerView.findViewById(R.id.tv_listview_header_state);
-		tvLastUpdateTime = (TextView) headerView.findViewById(R.id.tv_listview_header_last_update_time);
-
-		tvLastUpdateTime.setText("上次更新时间: " + getLastUpdateTime());
-
-		headerView.measure(0, 0); 
-		headerViewHeight = headerView.getMeasuredHeight();
-		headerView.setPadding(0, -headerViewHeight, 0, 0);
-		this.addHeaderView(headerView);
 		initAnimation();
-	}
-
-	private String getLastUpdateTime() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return sdf.format(System.currentTimeMillis());
 	}
 
 	private void initAnimation() {
@@ -95,62 +71,12 @@ public class RefreshListView extends ListView implements OnScrollListener {
 		case MotionEvent.ACTION_DOWN:
 			downY = (int) ev.getY();
 			break;
-		case MotionEvent.ACTION_MOVE:
-			int moveY = (int) ev.getY();
-			int diff = (moveY - downY) / 2;
-			int paddingTop = -headerViewHeight + diff;
-			if (firstVisibleItemPosition == 0 && -headerViewHeight < paddingTop) {
-				if (paddingTop > 0 && currentState == DOWN_PULL_REFRESH) { 
-					currentState = RELEASE_REFRESH;
-					refreshHeaderView();
-				} else if (paddingTop < 0 && currentState == RELEASE_REFRESH) { 
-					currentState = DOWN_PULL_REFRESH;
-					refreshHeaderView();
-				}
-				headerView.setPadding(0, paddingTop, 0, 0);
-				return true;
-			}
-			break;
-		case MotionEvent.ACTION_UP:
-			if (currentState == RELEASE_REFRESH) {
-				headerView.setPadding(0, 0, 0, 0);
-				currentState = REFRESHING;
-				refreshHeaderView();
-
-				if (mOnRefershListener != null) {
-					mOnRefershListener.onDownPullRefresh(); 
-				}
-			} else if (currentState == DOWN_PULL_REFRESH) {
-				headerView.setPadding(0, -headerViewHeight, 0, 0);
-			}
-			break;
 		default:
 			break;
 		}
 		return super.onTouchEvent(ev);
 	}
 
-	
-	private void refreshHeaderView() {
-		switch (currentState) {
-		case DOWN_PULL_REFRESH:
-			tvState.setText("下拉刷新......");
-			ivArrow.startAnimation(downAnimation);
-			break;
-		case RELEASE_REFRESH:
-			tvState.setText("放开刷新");
-			ivArrow.startAnimation(upAnimation);
-			break;
-		case REFRESHING:
-			ivArrow.clearAnimation();
-			ivArrow.setVisibility(View.GONE);
-			mProgressBar.setVisibility(View.VISIBLE);
-			tvState.setText("加载中......");
-			break;
-		default:
-			break;
-		}
-	}
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -181,15 +107,6 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
 	public void setOnRefreshListener(OnRefreshListener listener) {
 		mOnRefershListener = listener;
-	}
-
-	public void hideHeaderView() {
-		headerView.setPadding(0, -headerViewHeight, 0, 0);
-		ivArrow.setVisibility(View.VISIBLE);
-		mProgressBar.setVisibility(View.GONE);
-		tvState.setText("更新条目");
-		tvLastUpdateTime.setText("上次更新时间: " + getLastUpdateTime());
-		currentState = DOWN_PULL_REFRESH;
 	}
 
 	public void hideFooterView() {

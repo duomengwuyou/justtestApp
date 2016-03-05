@@ -58,72 +58,30 @@ public class MainTab02 extends Fragment {
         createAdapter();
         getMoreImages(false);
         cardsList.setAdapter(adapter);
-        cardsList.setOnItemClickListener(new ListItemClickListener());
         cardsList.setOnRefreshListener(new onDownPullRefresh());
+        cardsList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Clicked on List Item ", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private CardsAdapter createAdapter() {
         ArrayList<PictureObj> items = new ArrayList<PictureObj>();
         if (adapter == null) {
-            adapter = new CardsAdapter(getActivity(), items, new ListItemButtonClickListener());
+            adapter = new CardsAdapter(getActivity(), items);
         }
         return adapter;
     }
 
-    private final class ListItemButtonClickListener implements OnClickListener {
-        @Override
-        public void onClick(View v) {
-            // for (int i = cardsList.getFirstVisiblePosition(); i <= cardsList
-            // .getLastVisiblePosition(); i++) {
-            // if (v == cardsList.getChildAt(
-            // i - cardsList.getFirstVisiblePosition()).findViewById(
-            // R.id.list_item_card_button_1)) {
-            // // PERFORM AN ACTION WITH THE ITEM AT POSITION i
-            // Toast.makeText(getActivity(),
-            // "Clicked on Left Action Button of List Item " + i,
-            // Toast.LENGTH_SHORT).show();
-            // } else if (v == cardsList.getChildAt(
-            // i - cardsList.getFirstVisiblePosition()).findViewById(
-            // R.id.list_item_card_button_2)) {
-            // // PERFORM ANOTHER ACTION WITH THE ITEM AT POSITION i
-            // Toast.makeText(getActivity(),
-            // "Clicked on Right Action Button of List Item " + i,
-            // Toast.LENGTH_SHORT).show();
-            // }
-            // }
-        }
-    }
-
-    private final class ListItemClickListener implements OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Toast.makeText(getActivity(), "Clicked on List Item " + position, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private final class onDownPullRefresh implements OnRefreshListener {
-        @Override
-        public void onDownPullRefresh() {
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void...params) {
-                    loadMoreImages(false);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void result) {
-                    adapter.notifyDataSetChanged();
-                    cardsList.hideHeaderView();
-                }
-            }.execute(new Void[] {});
-        }
-
         @Override
         public void onLoadingMore() {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void...params) {
+                    SystemClock.sleep(1000);
                     loadMoreImages(true);
                     return null;
                 }
@@ -170,7 +128,7 @@ public class MainTab02 extends Fragment {
 
                                 }
                                 if (adapter == null) {
-                                    adapter = new CardsAdapter(getActivity(), items, new ListItemButtonClickListener());
+                                    adapter = new CardsAdapter(getActivity(), items);
                                 }
                                 if (preOrNot) {
                                     adapter.getItems().addAll(items);
@@ -221,7 +179,7 @@ public class MainTab02 extends Fragment {
 
                                 }
                                 if (adapter == null) {
-                                    adapter = new CardsAdapter(getActivity(), items, new ListItemButtonClickListener());
+                                    adapter = new CardsAdapter(getActivity(), items);
                                 }
                                 if (preOrNot) {
                                     adapter.getItems().addAll(items);

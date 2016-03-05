@@ -30,11 +30,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CardsAdapter extends BaseAdapter {
 
     private List<PictureObj> items;
-    private final OnClickListener itemButtonClickListener;
     private final Context context;
     
     private static RequestQueue requestQueue;
@@ -42,13 +42,9 @@ public class CardsAdapter extends BaseAdapter {
     private static ImageCache imageCache;
     private static ImageLoader imageLoader;
 
-
-    private static Map<String, Boolean> picMap = new HashMap<String, Boolean>();
-
-    public CardsAdapter(Context context, List<PictureObj> items, OnClickListener itemButtonClickListener) {
+    public CardsAdapter(Context context, List<PictureObj> items) {
         this.context = context;
         this.items = items;
-        this.itemButtonClickListener = itemButtonClickListener;
         requestQueue = Volley.newRequestQueue(context);
         lruCache = new LruCache<String, Bitmap>(100);
         
@@ -101,8 +97,6 @@ public class CardsAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.Card_Title = (TextView) convertView.findViewById(R.id.Card_Title);
             holder.Card_Pic = (NetworkImageView) convertView.findViewById(R.id.Card_Pic);
-            //holder.itemButton1 = (Button) convertView.findViewById(R.id.list_item_card_button_1);
-            //holder.itemButton2 = (Button) convertView.findViewById(R.id.list_item_card_button_2);
             convertView.setTag(holder);
 
         } else {
@@ -114,40 +108,19 @@ public class CardsAdapter extends BaseAdapter {
         // Load the image and set it on the ImageView
         String imageUrl = items.get(position).getPic();
         showImageByNetworkImageView(holder.Card_Pic, imageUrl);
-        
-
-        // if (itemButtonClickListener != null) {
-        // holder.itemButton1.setOnClickListener(itemButtonClickListener);
-        // holder.itemButton2.setOnClickListener(itemButtonClickListener);
-        // }
-
-        // holder.itemButton1.setOnClickListener(new OnClickListener() {
-        //
-        // @Override
-        // public void onClick(View v) {
-        // // TODO Auto-generated method stub
-        // Toast.makeText(context, "Clicked on Left Action Button of List Item " + position, Toast.LENGTH_SHORT)
-        // .show();
-        // }
-        // });
-        // holder.itemButton2.setOnClickListener(new OnClickListener() {
-        //
-        // @Override
-        // public void onClick(View v) {
-        // // TODO Auto-generated method stub
-        // Toast.makeText(context, "Clicked on right Action Button of List Item " + position, Toast.LENGTH_SHORT)
-        // .show();
-        // }
-        // });
-
+        // 图片点击时间
+        holder.Card_Pic.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "点击图片", Toast.LENGTH_SHORT).show();
+            }
+        });
         return convertView;
     }
 
     private static class ViewHolder {
         private TextView Card_Title;
         private NetworkImageView Card_Pic;
-        // private Button itemButton1;
-        // private Button itemButton2;
     }
     
     /**
