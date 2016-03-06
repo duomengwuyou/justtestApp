@@ -31,7 +31,7 @@ public class SinglePic extends Activity {
 
         setContentView(R.layout.singlepic);
         zoomImg = (ZoomImageView) findViewById(R.id.singleimg);
-        final Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.icon);
+        final Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.picbacg);
         zoomImg.setImage(bitmap);
         getImage(imagePath);
         double num = Math.random();

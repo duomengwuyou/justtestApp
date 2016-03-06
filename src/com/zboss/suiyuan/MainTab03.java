@@ -148,7 +148,7 @@ public class MainTab03 extends Fragment {
         if (adapter != null) {
             adapter.getItems().clear();
             adapter.notifyDataSetChanged();
-            loadMoreNews(false);
+            loadMoreNews(true);
         }
     }
 

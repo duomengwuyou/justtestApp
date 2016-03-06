@@ -87,7 +87,6 @@ public class NewsCardsAdapter extends BaseAdapter {
         holder.readMore.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.readMore.setTextColor(R.drawable.selector_text_press_color);
                 Intent intent = new Intent(context, SingleNews.class);
                 intent.putExtra("newsPath", newsPath); 
                 context.startActivity(intent);

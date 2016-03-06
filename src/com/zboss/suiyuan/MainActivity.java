@@ -42,33 +42,42 @@ import com.zboss.suiyuan.enums.TitleEnum;
 import com.zboss.suiyuan.utils.SendMsgAsyncTask;
 
 public class MainActivity extends FragmentActivity {
-    private ViewPager mViewPager;
-    private FragmentPagerAdapter mAdapter;
-    private List<Fragment> mFragments = new ArrayList<Fragment>();
+    private static ViewPager mViewPager;
+    private static FragmentPagerAdapter mAdapter;
+    private static List<Fragment> mFragments = new ArrayList<Fragment>();
 
     public static LinearLayout mTabLiaotian;
     public static LinearLayout mTabFaxian;
     public static LinearLayout mTabTongxunlu;
 
-    private TextView mLiaotian;
-    private TextView mFaxian;
-    private TextView mTongxunlu;
+    private static TextView mLiaotian;
+    private static TextView mFaxian;
+    private static TextView mTongxunlu;
 
     public static BadgeView mBadgeViewforLiaotian;
     public static BadgeView mBadgeViewforFaxian;
     public static BadgeView mBadgeViewforTongxunlu;
 
-    private ImageView mTabLine;
+    private static ImageView mTabLine;
 
     // 设置图表
-    private ImageView setImage;
+    private static ImageView setImage;
+    private static ImageView newsSet;
+    private static ImageView liaotianset;
 
     public static int currentIndex;
-    private int screenWidth;
+    private static int screenWidth;
 
     // 图片类型选择相关
     private RadioOnClick radioOnClick = new RadioOnClick(1);
-    private ListView areaRadioListView;
+    private NewsRadioOnClick newsRadioOnClick = new NewsRadioOnClick(1);
+    private static ListView areaRadioListView;
+    private static ListView newsRadioListView;
+    
+    private static FaxianClick faxianClickListener;
+    private static LiaotianClick liaotianClickListener;
+    private static TongxunluClick tongxunluClickListener;
+    private static PageOnPageChangeListener pageChangeLister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,102 +107,146 @@ public class MainActivity extends FragmentActivity {
 
         // 设置碎片适配器
         mViewPager.setAdapter(mAdapter);
+        
+        faxianClickListener = new FaxianClick();
+        liaotianClickListener = new LiaotianClick();
+        tongxunluClickListener = new TongxunluClick();
+        pageChangeLister = new PageOnPageChangeListener();
 
         // 页面改变的时候触发事件
-        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+        mViewPager.setOnPageChangeListener(pageChangeLister);
 
-            @Override
-            public void onPageSelected(int position) {
-                resetTextView();
-                switch (position) {
-                    case 0:
-                        mTabLiaotian.removeView(mBadgeViewforLiaotian);
-                        mBadgeViewforLiaotian.setBadgeCount(0);
-                        mLiaotian.setTextColor(getResources().getColor(R.color.green));
-                        break;
-                    case 1:
-                        mFaxian.setTextColor(getResources().getColor(R.color.green));
-
-                        mTabFaxian.removeView(mBadgeViewforFaxian);
-                        mBadgeViewforFaxian.setBadgeCount(0);
-                        // mTabFaxian.addView(mBadgeViewforFaxian);
-                        break;
-                    case 2:
-                        mTongxunlu.setTextColor(getResources().getColor(R.color.green));
-
-                        break;
-                }
-                currentIndex = position;
-            }
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (currentIndex == 0 && position == 0)// 0->1
-                {
-                    LinearLayout.LayoutParams lp =
-                            (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
-                    lp.leftMargin = (int) (positionOffset * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
-                    mTabLine.setLayoutParams(lp);
-                } else if (currentIndex == 1 && position == 0) // 1->0
-                {
-                    LinearLayout.LayoutParams lp =
-                            (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
-                    lp.leftMargin =
-                            (int) (-(1 - positionOffset) * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
-                    mTabLine.setLayoutParams(lp);
-
-                } else if (currentIndex == 1 && position == 1) // 1->2
-                {
-                    LinearLayout.LayoutParams lp =
-                            (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
-                    lp.leftMargin = (int) (positionOffset * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
-                    mTabLine.setLayoutParams(lp);
-                } else if (currentIndex == 2 && position == 1) // 2->1
-                {
-                    LinearLayout.LayoutParams lp =
-                            (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
-                    lp.leftMargin =
-                            (int) (-(1 - positionOffset) * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
-                    mTabLine.setLayoutParams(lp);
-
-                }
-                Log.e("xxx", positionOffset + " 0000 " + positionOffsetPixels + " ---- " + position);
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-
-        mTabLiaotian.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(0);
-                return;
-            }
-        });
-
-        mFaxian.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(1);
-                return;
-            }
-        });
-
-        mTongxunlu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(2);
-                return;
-            }
-        });
+        mTabLiaotian.setOnClickListener(liaotianClickListener);
+        mFaxian.setOnClickListener(faxianClickListener);
+        mTongxunlu.setOnClickListener(tongxunluClickListener);
 
         setImage.setOnClickListener(new RadioClickListener());
+        newsSet.setOnClickListener(new NewsRadioClickListener());
 
         // 默认选择第二个标签
         mViewPager.setCurrentItem(1);
+    }
+    
+    
+    
+
+    class PageOnPageChangeListener implements OnPageChangeListener {
+        @Override
+        public void onPageSelected(int position) {
+            resetTextView();
+            switch (position) {
+                case 0:
+                    mTabLiaotian.removeView(mBadgeViewforLiaotian);
+                    mBadgeViewforLiaotian.setBadgeCount(0);
+                    mLiaotian.setTextColor(getResources().getColor(R.color.green));
+
+                    // 隐藏图标
+                    liaotianset.setVisibility(View.VISIBLE);
+                    setImage.setVisibility(View.GONE);
+                    newsSet.setVisibility(View.GONE);
+                    break;
+                case 1:
+                    mFaxian.setTextColor(getResources().getColor(R.color.green));
+
+                    mTabFaxian.removeView(mBadgeViewforFaxian);
+                    mBadgeViewforFaxian.setBadgeCount(0);
+                    // mTabFaxian.addView(mBadgeViewforFaxian);
+
+                    // 隐藏图标
+                    liaotianset.setVisibility(View.GONE);
+                    setImage.setVisibility(View.VISIBLE);
+                    newsSet.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    mTongxunlu.setTextColor(getResources().getColor(R.color.green));
+                    mTabTongxunlu.removeView(mBadgeViewforTongxunlu);
+                    mBadgeViewforTongxunlu.setBadgeCount(0);
+
+                    // 隐藏图标
+                    liaotianset.setVisibility(View.GONE);
+                    setImage.setVisibility(View.GONE);
+                    newsSet.setVisibility(View.VISIBLE);
+                    break;
+            }
+            currentIndex = position;
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            if (currentIndex == 0 && position == 0)// 0->1
+            {
+                LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
+                lp.leftMargin = (int) (positionOffset * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
+                mTabLine.setLayoutParams(lp);
+            } else if (currentIndex == 1 && position == 0) // 1->0
+            {
+                LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
+                lp.leftMargin =
+                        (int) (-(1 - positionOffset) * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
+                mTabLine.setLayoutParams(lp);
+
+            } else if (currentIndex == 1 && position == 1) // 1->2
+            {
+                LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
+                lp.leftMargin = (int) (positionOffset * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
+                mTabLine.setLayoutParams(lp);
+            } else if (currentIndex == 2 && position == 1) // 2->1
+            {
+                LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
+                lp.leftMargin =
+                        (int) (-(1 - positionOffset) * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
+                mTabLine.setLayoutParams(lp);
+
+            } else if (currentIndex == 2 && position == 0) // 2->0
+            {
+                LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
+                lp.leftMargin =
+                        (int) (-(1 - positionOffset) * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
+                mTabLine.setLayoutParams(lp);
+
+            } else if (currentIndex == 0 && position == 2) // 0->2
+            {
+                LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
+                lp.leftMargin =
+                        (int) (-(1 - positionOffset) * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
+                mTabLine.setLayoutParams(lp);
+
+            } else if (currentIndex == 2 && position == 2) // 2->0
+            {
+                LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabLine.getLayoutParams();
+                lp.leftMargin = (int) (positionOffset * (screenWidth * 1.0 / 3) + currentIndex * (screenWidth / 3));
+                mTabLine.setLayoutParams(lp);
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
+
+    }
+    
+    class FaxianClick implements OnClickListener{
+        @Override
+        public void onClick(View v) {
+            mViewPager.setCurrentItem(1);
+            return;
+        }
+    }
+    
+    class LiaotianClick implements OnClickListener{
+        @Override
+        public void onClick(View v) {
+            mViewPager.setCurrentItem(0);
+            return;
+        }
+    }
+    
+    class TongxunluClick implements OnClickListener{
+        @Override
+        public void onClick(View v) {
+            mViewPager.setCurrentItem(2);
+            return;
+        }
     }
 
     /**
@@ -206,21 +259,40 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             int index = 0;
-            if(PushApplication.DISPLAY_TYPE != null) {
-                for(Integer i : PushApplication.picids) {
-                    if(PushApplication.DISPLAY_TYPE != i){
-                        index ++; 
+            if (PushApplication.DISPLAY_TYPE != null) {
+                for (Integer i : PushApplication.picids) {
+                    if (PushApplication.DISPLAY_TYPE != i) {
+                        index++;
                     } else {
-                        break; 
+                        break;
                     }
                 }
             }
             AlertDialog ad =
                     new AlertDialog.Builder(MainActivity.this).setTitle("选择图片类型")
-                            .setSingleChoiceItems(PushApplication.pictypes, index, radioOnClick)
-                            .create();
+                            .setSingleChoiceItems(PushApplication.pictypes, index, radioOnClick).create();
             areaRadioListView = ad.getListView();
-            areaRadioListView.setSelection(0);
+            ad.show();
+        }
+    }
+
+    class NewsRadioClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            int index = 0;
+            if (PushApplication.NEWS_DISPLAY_TYPE != null) {
+                for (Integer i : PushApplication.newsids) {
+                    if (PushApplication.NEWS_DISPLAY_TYPE != (long) i) {
+                        index++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            AlertDialog ad =
+                    new AlertDialog.Builder(MainActivity.this).setTitle("选择文章类型")
+                            .setSingleChoiceItems(PushApplication.newstypes, index, newsRadioOnClick).create();
+            newsRadioListView = ad.getListView();
             ad.show();
         }
     }
@@ -261,6 +333,36 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    class NewsRadioOnClick implements DialogInterface.OnClickListener {
+        private int index;
+
+        public NewsRadioOnClick(int index) {
+            this.index = index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            setIndex(whichButton);
+            Toast.makeText(MainActivity.this, "您选择了： " + PushApplication.newstypes[index], Toast.LENGTH_LONG).show();
+            if (index == 0) {
+                PushApplication.NEWS_DISPLAY_TYPE = null;
+                MainTab03.resetNewsList();
+            } else {
+                // 设置图片类型
+                PushApplication.NEWS_DISPLAY_TYPE = (long) PushApplication.newsids[index];
+                MainTab03.resetNewsList();
+            }
+            dialog.dismiss();
+        }
+    }
+
     // 设置tab line的宽度为屏幕的三分之一
     private void initTabLine() {
         mTabLine = (ImageView) findViewById(R.id.id_tab_line);
@@ -295,6 +397,8 @@ public class MainActivity extends FragmentActivity {
 
         // 设置图标
         setImage = (ImageView) findViewById(R.id.set);
+        newsSet = (ImageView) findViewById(R.id.newsset);
+        liaotianset = (ImageView) findViewById(R.id.liaotianset);
 
         // 新建三个碎片
         MainTab01 tab01 = new MainTab01();

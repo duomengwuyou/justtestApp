@@ -156,7 +156,7 @@ public class MainTab02 extends Fragment {
         if (adapter != null) {
             adapter.getItems().clear();
             adapter.notifyDataSetChanged();
-            loadMoreImages(false);
+            loadMoreImages(true);
         }
     }
 

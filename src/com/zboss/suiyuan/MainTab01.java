@@ -166,7 +166,7 @@ public class MainTab01 extends Fragment {
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
                                     // 奖励用户图片
-                                    MainTab02.loadMoreImages(false);
+                                    MainTab02.loadMoreImages(true);
                                     progressDialog.dismiss();
                                     // 找到了
                                 } else if (status == 1) {
@@ -178,14 +178,14 @@ public class MainTab01 extends Fragment {
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
                                     // 奖励用户图片
-                                    MainTab02.loadMoreImages(false);
+                                    MainTab02.loadMoreImages(true);
                                     progressDialog.dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
                                     // 奖励用户图片
-                                    MainTab02.loadMoreImages(false);
+                                    MainTab02.loadMoreImages(true);
                                     progressDialog.dismiss();
                                 }
 
@@ -194,7 +194,7 @@ public class MainTab01 extends Fragment {
                                 PushApplication.YOUR_CHANNEL_ID = null;
                                 PushApplication.buildConOrNot = false;
                                 // 奖励用户图片
-                                MainTab02.loadMoreImages(false);
+                                MainTab02.loadMoreImages(true);
                                 progressDialog.dismiss();
                             }
 
@@ -207,7 +207,7 @@ public class MainTab01 extends Fragment {
                         PushApplication.YOUR_CHANNEL_ID = null;
                         PushApplication.buildConOrNot = false;
                         // 奖励用户图片
-                        MainTab02.loadMoreImages(false);
+                        MainTab02.loadMoreImages(true);
                         progressDialog.dismiss();
                     }
                 });

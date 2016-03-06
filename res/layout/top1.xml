@@ -59,7 +59,24 @@
                   -->
                   <ImageView 
                     android:layout_width="30dp" 
-    				android:layout_height="30dp" 
+    				android:layout_height="30dp"
+    				android:visibility="gone" 
+    				android:id="@+id/liaotianset"
+    				android:src="@drawable/actionbar_more_icon"
+                    />
+                  
+                  <ImageView 
+                    android:layout_width="30dp" 
+    				android:layout_height="30dp"
+    				android:visibility="gone" 
+    				android:id="@+id/newsset"
+    				android:src="@drawable/actionbar_more_icon"
+                    />
+                  
+                  <ImageView 
+                    android:layout_width="30dp" 
+    				android:layout_height="30dp"
+    				android:visibility="gone" 
     				android:id="@+id/set"
     				android:src="@drawable/actionbar_more_icon"
                     />
