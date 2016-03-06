@@ -1,11 +1,7 @@
 package com.zboss.suiyuan.newspic;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -13,22 +9,18 @@ import com.android.volley.toolbox.ImageLoader.ImageCache;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.zboss.suiyuan.R;
+import com.zboss.suiyuan.SinglePic;
 import com.zboss.suiyuan.bean.PictureObj;
-import com.zboss.suiyuan.utils.AsyncImageLoader;
-import com.zboss.suiyuan.utils.AsyncImageLoader.ImageCallback;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,13 +98,15 @@ public class CardsAdapter extends BaseAdapter {
         holder.Card_Title.setText(items.get(position).getTitle());
         
         // Load the image and set it on the ImageView
-        String imageUrl = items.get(position).getPic();
+        final String imageUrl = items.get(position).getPic();
         showImageByNetworkImageView(holder.Card_Pic, imageUrl);
-        // 图片点击时间
+        
         holder.Card_Pic.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "点击图片", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, SinglePic.class);
+                intent.putExtra("imagePath", imageUrl); 
+                context.startActivity(intent);
             }
         });
         return convertView;

@@ -92,4 +92,9 @@ public class ConnectServer {
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.MORE_IMAGE) + parameters;
         return path;
     }
+    
+    public static String getPicTypes() {
+        String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.CRAWL_TYPE);
+        return path;
+    }
 }

@@ -54,6 +54,9 @@ public class PushApplication extends Application {
     public static boolean buildConOrNot = false;
     // 图片类型
     public static Integer DISPLAY_TYPE = null;
+    // 图片选项
+    public static String[] pictypes;
+    public static Integer[] picids;
 
     public synchronized static PushApplication getInstance() {
         return mApplication;

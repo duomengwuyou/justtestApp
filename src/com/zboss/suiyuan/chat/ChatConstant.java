@@ -11,12 +11,14 @@ public class ChatConstant {
     public static final String UPLOADINFO = "uploadinfo";
     public static final String CLOSE_CON = "closecon";
     public static final String MORE_IMAGE = "moreimage";
+    public static final String CRAWL_TYPE = "crawltypes";
     
     public static final Map<String, String> PATH_MAP = new HashMap<String, String>();
     static {
         PATH_MAP.put(UPLOADINFO, "suiyuan/uploadinfo?");
         PATH_MAP.put(CLOSE_CON, "suiyuan/closecon?");
         PATH_MAP.put(MORE_IMAGE, "moreimage?");
+        PATH_MAP.put(CRAWL_TYPE, "crawltypes?");
     }
     
 

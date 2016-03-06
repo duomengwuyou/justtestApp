@@ -165,6 +165,8 @@ public class MainTab01 extends Fragment {
                                     Toast.makeText(getActivity(), "恭喜你，已加入聊天队列，等待有缘人联系你吧！", Toast.LENGTH_SHORT).show();
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
+                                    // 奖励用户图片
+                                    MainTab02.loadMoreImages(false);
                                     progressDialog.dismiss();
                                     // 找到了
                                 } else if (status == 1) {
@@ -175,11 +177,15 @@ public class MainTab01 extends Fragment {
                                     Toast.makeText(getActivity(), "抱歉，认证信息有误，请重启软件或者确定网络连接！", Toast.LENGTH_SHORT).show();
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
+                                    // 奖励用户图片
+                                    MainTab02.loadMoreImages(false);
                                     progressDialog.dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
+                                    // 奖励用户图片
+                                    MainTab02.loadMoreImages(false);
                                     progressDialog.dismiss();
                                 }
 
@@ -187,6 +193,8 @@ public class MainTab01 extends Fragment {
                                 Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
                                 PushApplication.YOUR_CHANNEL_ID = null;
                                 PushApplication.buildConOrNot = false;
+                                // 奖励用户图片
+                                MainTab02.loadMoreImages(false);
                                 progressDialog.dismiss();
                             }
 
@@ -198,6 +206,8 @@ public class MainTab01 extends Fragment {
                         Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
                         PushApplication.YOUR_CHANNEL_ID = null;
                         PushApplication.buildConOrNot = false;
+                        // 奖励用户图片
+                        MainTab02.loadMoreImages(false);
                         progressDialog.dismiss();
                     }
                 });

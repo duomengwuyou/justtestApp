@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,23 +39,28 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MainTab02 extends Fragment {
 
-    private RefreshListView cardsList;
+    public static RefreshListView cardsList;
 
-    private CardsAdapter adapter;
-    
-    private static RequestQueue requestQueue;
+    public static CardsAdapter adapter;
 
+    public static RequestQueue requestQueue;
+
+    public static FragmentActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.main_tab_02, container, false);
         cardsList = (RefreshListView) rootView.findViewById(R.id.cards_list);
-        requestQueue = Volley.newRequestQueue(getActivity());
+        activity = getActivity();
+        requestQueue = Volley.newRequestQueue(activity);
         setupList();
         return rootView;
     }
 
     private void setupList() {
+        // 初始化图片种类
+        initPicTypes();
+
         createAdapter();
         getMoreImages(false);
         cardsList.setAdapter(adapter);
@@ -93,6 +99,9 @@ public class MainTab02 extends Fragment {
                 }
             }.execute(new Void[] {});
         }
+    }
+
+    public void test() {
     }
 
     /**
@@ -152,8 +161,16 @@ public class MainTab02 extends Fragment {
                 });
         requestQueue.add(jsonObjectRequest);
     }
-    
-    private void loadMoreImages(final boolean preOrNot) {
+
+    public static void resetPicList() {
+        if (adapter != null) {
+            adapter.getItems().clear();
+            adapter.notifyDataSetChanged();
+            loadMoreImages(false);
+        }
+    }
+
+    public static void loadMoreImages(final boolean preOrNot) {
         List<DisplayItem> items = new ArrayList<DisplayItem>();
 
         String JSONDataUrl = ConnectServer.getMoreImages(PushApplication.DISPLAY_TYPE);
@@ -164,37 +181,87 @@ public class MainTab02 extends Fragment {
                     public void onResponse(JSONObject response) {
                         // 处理返回的JSON数据
 
-                            try {
-                                ArrayList<PictureObj> items = new ArrayList<PictureObj>();
+                        try {
+                            ArrayList<PictureObj> items = new ArrayList<PictureObj>();
 
-                                String jsonImages = response.getString("data");
-                                JSONArray array = new JSONArray(jsonImages);
-                                int imageSize = array.length();
-                                for (int i = 0; i < imageSize; i++) {
-                                    JSONObject obj = array.getJSONObject(i);
-                                    PictureObj newPic = new PictureObj();
-                                    newPic.setTitle(obj.getString("title"));
-                                    newPic.setPic(obj.getString("imageUrl"));
-                                    items.add(newPic);
+                            String jsonImages = response.getString("data");
+                            JSONArray array = new JSONArray(jsonImages);
+                            int imageSize = array.length();
+                            for (int i = 0; i < imageSize; i++) {
+                                JSONObject obj = array.getJSONObject(i);
+                                PictureObj newPic = new PictureObj();
+                                newPic.setTitle(obj.getString("title"));
+                                newPic.setPic(obj.getString("imageUrl"));
+                                items.add(newPic);
 
-                                }
-                                if (adapter == null) {
-                                    adapter = new CardsAdapter(getActivity(), items);
-                                }
-                                if (preOrNot) {
-                                    adapter.getItems().addAll(items);
-                                } else {
-                                    adapter.getItems().addAll(0, items);
-                                }
-                                adapter.notifyDataSetChanged();
-                            } catch (JSONException e) {
-                                Toast.makeText(getActivity(), "抱歉，图片加载失败！", Toast.LENGTH_SHORT).show();
                             }
+                            if (adapter == null) {
+                                adapter = new CardsAdapter(activity, items);
+                            }
+                            if (preOrNot) {
+                                adapter.getItems().addAll(items);
+                            } else {
+                                adapter.getItems().addAll(0, items);
+                            }
+                            
+                            // 设置通知
+                            // 红点提示
+                            if (MainActivity.currentIndex != 1) {
+                                MainActivity.mTabFaxian.removeView(MainActivity.mBadgeViewforFaxian);
+                                int nowCount = MainActivity.mBadgeViewforFaxian.getBadgeCount();
+                                MainActivity.mBadgeViewforFaxian.setBadgeCount(nowCount + imageSize);
+                                MainActivity.mTabFaxian.addView(MainActivity.mBadgeViewforFaxian);
+                            }
+                            
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            Toast.makeText(activity, "抱歉，图片加载失败！", Toast.LENGTH_SHORT).show();
                         }
+                    }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError arg0) {
-                        Toast.makeText(getActivity(), "抱歉，图片加载失败！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "抱歉，图片加载失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private void initPicTypes() {
+        List<DisplayItem> items = new ArrayList<DisplayItem>();
+        String JSONDataUrl = ConnectServer.getPicTypes();
+        JsonObjectRequest jsonObjectRequest =
+                new JsonObjectRequest(Request.Method.GET, JSONDataUrl, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // 处理返回的JSON数据
+
+                        try {
+                            String jsonImages = response.getString("pictypes");
+                            JSONArray array = new JSONArray(jsonImages);
+                            int imageSize = array.length();
+                            int arraySize = imageSize + 1;
+                            // 初始化数组
+                            PushApplication.picids = new Integer[arraySize];
+                            PushApplication.pictypes = new String[arraySize];
+                            PushApplication.picids[0] = -1;
+                            PushApplication.pictypes[0] = "全部";
+
+                            for (int i = 0; i < imageSize; i++) {
+                                JSONObject obj = array.getJSONObject(i);
+                                int crawlTypeId = obj.getInt("id");
+                                String crawlType = obj.getString("crawltype");
+                                PushApplication.picids[i + 1] = crawlTypeId;
+                                PushApplication.pictypes[i + 1] = crawlType;
+                            }
+                        } catch (JSONException e) {
+                            Toast.makeText(getActivity(), "抱歉，图片类型加载失败！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError arg0) {
+                        Toast.makeText(getActivity(), "抱歉，图片类型加载失败！", Toast.LENGTH_SHORT).show();
                     }
                 });
         requestQueue.add(jsonObjectRequest);

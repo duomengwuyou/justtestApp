@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,16 +47,16 @@ public class MainActivity extends FragmentActivity {
     private List<Fragment> mFragments = new ArrayList<Fragment>();
 
     public static LinearLayout mTabLiaotian;
-    private LinearLayout mTabFaxian;
-    private LinearLayout mTabTongxunlu;
+    public static LinearLayout mTabFaxian;
+    public static LinearLayout mTabTongxunlu;
 
     private TextView mLiaotian;
     private TextView mFaxian;
     private TextView mTongxunlu;
 
     public static BadgeView mBadgeViewforLiaotian;
-    private BadgeView mBadgeViewforFaxian;
-    private BadgeView mBadgeViewforTongxunlu;
+    public static BadgeView mBadgeViewforFaxian;
+    public static BadgeView mBadgeViewforTongxunlu;
 
     private ImageView mTabLine;
 
@@ -64,6 +65,10 @@ public class MainActivity extends FragmentActivity {
 
     public static int currentIndex;
     private int screenWidth;
+
+    // 图片类型选择相关
+    private RadioOnClick radioOnClick = new RadioOnClick(1);
+    private ListView areaRadioListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +114,8 @@ public class MainActivity extends FragmentActivity {
                     case 1:
                         mFaxian.setTextColor(getResources().getColor(R.color.green));
 
-                        // mTabFaxian.removeView(mBadgeViewforFaxian);
-                        // mBadgeViewforFaxian.setBadgeCount(15);
+                        mTabFaxian.removeView(mBadgeViewforFaxian);
+                        mBadgeViewforFaxian.setBadgeCount(0);
                         // mTabFaxian.addView(mBadgeViewforFaxian);
                         break;
                     case 2:
@@ -185,8 +190,75 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        setImage.setOnClickListener(new RadioClickListener());
+
         // 默认选择第二个标签
         mViewPager.setCurrentItem(1);
+    }
+
+    /**
+     * 选择图片按钮事件
+     * 
+     * @author xinglong
+     *
+     */
+    class RadioClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            int index = 0;
+            if(PushApplication.DISPLAY_TYPE != null) {
+                for(Integer i : PushApplication.picids) {
+                    if(PushApplication.DISPLAY_TYPE != i){
+                        index ++; 
+                    } else {
+                        break; 
+                    }
+                }
+            }
+            AlertDialog ad =
+                    new AlertDialog.Builder(MainActivity.this).setTitle("选择图片类型")
+                            .setSingleChoiceItems(PushApplication.pictypes, index, radioOnClick)
+                            .create();
+            areaRadioListView = ad.getListView();
+            areaRadioListView.setSelection(0);
+            ad.show();
+        }
+    }
+
+    /**
+     * 点击单选框事件
+     * 
+     * @author xmz
+     * 
+     */
+    class RadioOnClick implements DialogInterface.OnClickListener {
+        private int index;
+
+        public RadioOnClick(int index) {
+            this.index = index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            setIndex(whichButton);
+            Toast.makeText(MainActivity.this, "您选择了： " + PushApplication.pictypes[index], Toast.LENGTH_LONG).show();
+            if (index == 0) {
+                PushApplication.DISPLAY_TYPE = null;
+                MainTab02.resetPicList();
+            } else {
+                // 设置图片类型
+                PushApplication.DISPLAY_TYPE = PushApplication.picids[index];
+                MainTab02.resetPicList();
+            }
+            dialog.dismiss();
+        }
     }
 
     // 设置tab line的宽度为屏幕的三分之一
@@ -220,6 +292,9 @@ public class MainActivity extends FragmentActivity {
         mLiaotian = (TextView) findViewById(R.id.id_liaotian);
         mFaxian = (TextView) findViewById(R.id.id_faxian);
         mTongxunlu = (TextView) findViewById(R.id.id_tongxunlu);
+
+        // 设置图标
+        setImage = (ImageView) findViewById(R.id.set);
 
         // 新建三个碎片
         MainTab01 tab01 = new MainTab01();
