@@ -5,6 +5,8 @@
     <color name="ivory">#FFFFF0</color><!--象牙色 -->
 
     <color name="lightyellow">#FFFFE0</color><!--亮黄色 -->
+    
+    <color name="linkcolor">#999999</color><!--链接后颜色 -->
 
     <color name="yellow">#FFFF00</color><!--黄色 -->
 

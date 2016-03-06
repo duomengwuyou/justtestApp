@@ -97,4 +97,18 @@ public class ConnectServer {
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.CRAWL_TYPE);
         return path;
     }
+    
+    public static String getMoreNews(Long displayType) {
+        String parameters = "";
+        if(displayType != null) {
+            parameters = "displayType=" + displayType;
+        }
+        String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.MORE_NEWS) + parameters;
+        return path;
+    }
+    
+    public static String getNewsTypes() {
+        String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.NEWS_CRAWL_TYPE);
+        return path;
+    }
 }

@@ -29,7 +29,7 @@
     				android:layout_height="wrap_content" 
     				android:text="随缘吧"
     				android:layout_marginLeft="10dip"
-    				android:textSize="18dp"
+    				android:textSize="20dp"
     				android:textColor="@color/lightgray"
                     />
             </LinearLayout>

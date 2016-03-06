@@ -40,6 +40,10 @@
         <activity
             android:name="com.zboss.suiyuan.SinglePic" >
         </activity>
+        
+        <activity
+            android:name="com.zboss.suiyuan.SingleNews" >
+        </activity>
 
         <!-- push应用定义消息receiver声明 -->
         <receiver android:name="com.zboss.suiyuan.chat.MyPushMessageReceiver" >

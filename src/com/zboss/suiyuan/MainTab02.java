@@ -62,21 +62,15 @@ public class MainTab02 extends Fragment {
         initPicTypes();
 
         createAdapter();
-        getMoreImages(false);
+        getMoreImages(true);
         cardsList.setAdapter(adapter);
         cardsList.setOnRefreshListener(new onDownPullRefresh());
-        cardsList.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "Clicked on List Item ", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private CardsAdapter createAdapter() {
         ArrayList<PictureObj> items = new ArrayList<PictureObj>();
         if (adapter == null) {
-            adapter = new CardsAdapter(getActivity(), items);
+            adapter = new CardsAdapter(activity, items);
         }
         return adapter;
     }
@@ -101,8 +95,6 @@ public class MainTab02 extends Fragment {
         }
     }
 
-    public void test() {
-    }
 
     /**
      * 获取更多图片
@@ -110,8 +102,6 @@ public class MainTab02 extends Fragment {
      * @param preOrNot true 前面插入 false 后面插入
      */
     private void getMoreImages(final boolean preOrNot) {
-        List<DisplayItem> items = new ArrayList<DisplayItem>();
-
         String JSONDataUrl = ConnectServer.getMoreImages(PushApplication.DISPLAY_TYPE);
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "加载图片...", "请稍等...", true, false);
 
@@ -137,7 +127,7 @@ public class MainTab02 extends Fragment {
 
                                 }
                                 if (adapter == null) {
-                                    adapter = new CardsAdapter(getActivity(), items);
+                                    adapter = new CardsAdapter(activity, items);
                                 }
                                 if (preOrNot) {
                                     adapter.getItems().addAll(items);
@@ -171,8 +161,6 @@ public class MainTab02 extends Fragment {
     }
 
     public static void loadMoreImages(final boolean preOrNot) {
-        List<DisplayItem> items = new ArrayList<DisplayItem>();
-
         String JSONDataUrl = ConnectServer.getMoreImages(PushApplication.DISPLAY_TYPE);
 
         JsonObjectRequest jsonObjectRequest =
@@ -255,13 +243,13 @@ public class MainTab02 extends Fragment {
                                 PushApplication.pictypes[i + 1] = crawlType;
                             }
                         } catch (JSONException e) {
-                            Toast.makeText(getActivity(), "抱歉，图片类型加载失败！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "抱歉，图片类型加载失败！", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError arg0) {
-                        Toast.makeText(getActivity(), "抱歉，图片类型加载失败！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "抱歉，图片类型加载失败！", Toast.LENGTH_SHORT).show();
                     }
                 });
         requestQueue.add(jsonObjectRequest);

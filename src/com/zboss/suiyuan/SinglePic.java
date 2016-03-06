@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class SinglePic extends Activity {
 
@@ -33,7 +34,10 @@ public class SinglePic extends Activity {
         final Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.icon);
         zoomImg.setImage(bitmap);
         getImage(imagePath);
-        
+        double num = Math.random();
+        if(num < 0.8) {
+            Toast.makeText(SinglePic.this, "提示：用两个手指可以实现图片放大缩小", Toast.LENGTH_SHORT).show();
+        }
     }
     
     public void getImage(String imagePath) {

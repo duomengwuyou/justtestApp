@@ -27,7 +27,7 @@
                 android:gravity="center"
                 android:text="聊天"
                 android:textColor="@color/green"
-                android:textSize="15dip" />
+                android:textSize="18dip" />
         </LinearLayout>
 
         <LinearLayout
@@ -49,7 +49,7 @@
                 android:gravity="center"
                 android:text="图片"
                 android:textColor="@color/black"
-                android:textSize="15dip" />
+                android:textSize="18dip" />
         </LinearLayout>
 
         <LinearLayout
@@ -68,9 +68,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="漂流瓶"
+                android:text="文章"
                 android:textColor="@color/black"
-                android:textSize="15dip" />
+                android:textSize="18dip" />
         </LinearLayout>
     </LinearLayout>
 
