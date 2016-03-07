@@ -18,7 +18,7 @@
             android:background="@drawable/guide_round"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="10dip" >
+            android:padding="8dip" >
 
             <TextView
                 android:id="@+id/id_liaotian"
@@ -27,7 +27,7 @@
                 android:gravity="center"
                 android:text="聊天"
                 android:textColor="@color/green"
-                android:textSize="18dip" />
+                android:textSize="16dip" />
         </LinearLayout>
 
         <LinearLayout
@@ -39,7 +39,7 @@
             android:clickable="true"
             android:gravity="center"
              android:orientation="horizontal"
-            android:padding="10dip"
+            android:padding="8dip"
             android:saveEnabled="false" >
 
             <TextView
@@ -49,7 +49,7 @@
                 android:gravity="center"
                 android:text="图片"
                 android:textColor="@color/black"
-                android:textSize="18dip" />
+                android:textSize="16dip" />
         </LinearLayout>
 
         <LinearLayout
@@ -61,7 +61,7 @@
             android:focusable="false"
             android:gravity="center"
              android:orientation="horizontal"
-            android:padding="10dip" >
+            android:padding="8dip" >
 
             <TextView
                 android:id="@+id/id_tongxunlu"
@@ -70,7 +70,7 @@
                 android:gravity="center"
                 android:text="文章"
                 android:textColor="@color/black"
-                android:textSize="18dip" />
+                android:textSize="16dip" />
         </LinearLayout>
     </LinearLayout>
 
