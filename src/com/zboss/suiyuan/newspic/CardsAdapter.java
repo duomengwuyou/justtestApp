@@ -96,7 +96,9 @@ public class CardsAdapter extends BaseAdapter {
         }
 
         holder.Card_Title.setText(items.get(position).getTitle());
-        
+
+        holder.Card_Pic.setDefaultImageResId(R.drawable.icon);
+        holder.Card_Pic.setErrorImageResId(R.drawable.error);
         // Load the image and set it on the ImageView
         final String imageUrl = items.get(position).getPic();
         showImageByNetworkImageView(holder.Card_Pic, imageUrl);
