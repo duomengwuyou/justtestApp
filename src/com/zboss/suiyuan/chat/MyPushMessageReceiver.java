@@ -70,7 +70,7 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         if (errorCode == 0) {
             // 绑定成功 设置自己的channelId和对方channelId为自己
             PushApplication.MY_CHANNEL_ID = channelId;
-            PushApplication.YOUR_CHANNEL_ID = channelId;
+            PushApplication.YOUR_CHANNEL_ID = null;
             PushApplication.APP_ID = appid;
             PushApplication.USER_ID = userId;
         }

@@ -430,7 +430,11 @@ public class MainActivity extends FragmentActivity {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 // 关闭连接
-                closeConnection();
+                if((PushApplication.YOUR_CHANNEL_ID != null) && (PushApplication.MY_CHANNEL_ID != PushApplication.YOUR_CHANNEL_ID)) {
+                    closeConnection();
+                }else{
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
             }
         });
 
@@ -449,6 +453,7 @@ public class MainActivity extends FragmentActivity {
         String JSONDataUrl =
                 ConnectServer.getCloseCon(PushApplication.APP_ID, PushApplication.USER_ID,
                         PushApplication.MY_CHANNEL_ID);
+        final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "断开与有缘人联系...", "请稍等...", true, false);
 
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(Request.Method.GET, JSONDataUrl, null, new Response.Listener<JSONObject>() {
@@ -463,7 +468,7 @@ public class MainActivity extends FragmentActivity {
                                 new SendMsgAsyncTask(application.getGson().toJson(message),
                                         PushApplication.YOUR_CHANNEL_ID);
                         newTask.send();
-
+                        progressDialog.dismiss();
                         PushApplication.YOUR_CHANNEL_ID = null;
                         PushApplication.buildConOrNot = false;
                         // 关闭应用

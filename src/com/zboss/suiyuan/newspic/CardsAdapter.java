@@ -29,16 +29,16 @@ public class CardsAdapter extends BaseAdapter {
     private List<PictureObj> items;
     private final Context context;
     
-    private static RequestQueue requestQueue;
-    private static LruCache<String, Bitmap> lruCache;
-    private static ImageCache imageCache;
-    private static ImageLoader imageLoader;
+    public static RequestQueue requestQueue;
+    public static LruCache<String, Bitmap> lruCache;
+    public static ImageCache imageCache;
+    public static ImageLoader imageLoader;
 
     public CardsAdapter(Context context, List<PictureObj> items) {
         this.context = context;
         this.items = items;
         requestQueue = Volley.newRequestQueue(context);
-        lruCache = new LruCache<String, Bitmap>(100);
+        lruCache = new LruCache<String, Bitmap>(200);
         
         imageCache = new ImageCache() {
             @Override
