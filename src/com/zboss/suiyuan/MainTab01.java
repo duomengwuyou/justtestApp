@@ -114,17 +114,6 @@ public class MainTab01 extends Fragment {
                 mAdapter.notifyDataSetChanged();
                 mChatMessagesListView.setSelection(mDatas.size() - 1);
                 mMsgInput.setText("");
-
-                // 键盘自动关闭
-                InputMethodManager imm =
-                        (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                // 得到InputMethodManager的实例
-                if (imm.isActive()) {
-                    // 如果开启
-                    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
-                    // 关闭软键盘，开启方法相同，这个方法是切换开启与关闭状态的
-                }
-
             }
         });
 
