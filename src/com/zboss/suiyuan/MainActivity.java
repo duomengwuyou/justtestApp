@@ -10,6 +10,8 @@ import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -88,7 +90,6 @@ public class MainActivity extends FragmentActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
         
-        
 
         // 实例化视图
         initView();
@@ -124,6 +125,7 @@ public class MainActivity extends FragmentActivity {
 
         setImage.setOnClickListener(new RadioClickListener());
         newsSet.setOnClickListener(new NewsRadioClickListener());
+        liaotianset.setOnClickListener(new FindMore());
 
         // 默认选择第二个标签
         mViewPager.setCurrentItem(1);
@@ -248,6 +250,32 @@ public class MainActivity extends FragmentActivity {
         public void onClick(View v) {
             mViewPager.setCurrentItem(2);
             return;
+        }
+    }
+    
+    class FindMore implements OnClickListener{
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new Builder(MainActivity.this);
+            builder.setMessage("亲，查看更多精彩内容?");
+            builder.setTitle("福利来袭");
+            builder.setIcon(android.R.drawable.btn_star);
+            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    Uri uri = Uri.parse("http://www.suiyuan521.com/");  
+                    Intent it = new Intent(Intent.ACTION_VIEW, uri);  
+                    startActivity(it);
+                }
+            });
+
+            builder.setNegativeButton("取消", new android.content.DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            builder.create().show();
         }
     }
 

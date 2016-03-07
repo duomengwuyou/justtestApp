@@ -103,7 +103,7 @@ public class MainTab02 extends Fragment {
      */
     private void getMoreImages(final boolean preOrNot) {
         String JSONDataUrl = ConnectServer.getMoreImages(PushApplication.DISPLAY_TYPE);
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "加载图片...", "请稍等...", true, false);
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "初始化资源...", "请稍等...", true, false);
 
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(Request.Method.GET, JSONDataUrl, null, new Response.Listener<JSONObject>() {
