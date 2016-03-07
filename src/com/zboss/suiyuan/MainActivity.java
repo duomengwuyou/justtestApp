@@ -87,6 +87,8 @@ public class MainActivity extends FragmentActivity {
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, PushApplication.API_KEY);
 
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
+        
+        
 
         // 实例化视图
         initView();
