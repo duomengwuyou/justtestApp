@@ -127,8 +127,8 @@ public class MainActivity extends FragmentActivity {
         newsSet.setOnClickListener(new NewsRadioClickListener());
         liaotianset.setOnClickListener(new FindMore());
 
-        // 默认选择第二个标签
-        mViewPager.setCurrentItem(1);
+        // 默认选择第一个标签
+        mViewPager.setCurrentItem(0);
     }
     
     
@@ -515,4 +515,5 @@ public class MainActivity extends FragmentActivity {
                 });
         requestQueue.add(jsonObjectRequest);
     }
+
 }

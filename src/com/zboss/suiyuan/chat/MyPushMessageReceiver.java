@@ -7,14 +7,21 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.baidu.android.pushservice.PushMessageReceiver;
 import com.zboss.suiyuan.MainActivity;
 import com.zboss.suiyuan.MainTab01;
+import com.zboss.suiyuan.MainTab02;
 import com.zboss.suiyuan.PushApplication;
 import com.zboss.suiyuan.bean.ChatMessage;
 import com.zboss.suiyuan.bean.Message;
@@ -76,6 +83,7 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         }
     }
 
+
     /**
      * 接收透传消息的函数。
      *
@@ -115,17 +123,17 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                 if (!customJson.isNull("description")) {
                     chatContent = customJson.getString("description");
                 }
-                
-                if(!customJson.isNull("title")) {
+
+                if (!customJson.isNull("title")) {
                     title = customJson.getString("title");
                     // 别人和自己建立了连接
-                    if(title.equals(TitleEnum.BUILD_CONNECTION.getStatus())) {
+                    if (title.equals(TitleEnum.BUILD_CONNECTION.getStatus())) {
                         PushApplication.YOUR_CHANNEL_ID = chatContent;
                         PushApplication.buildConOrNot = true;
                         chatContent = "恭喜，已经联系上有缘人，你们可以聊天了！";
                         MainTab01.buildCon.setText("断开");
                         isComing = 3;
-                    } else if(title.equals(TitleEnum.CLOSE_CONNECTION.getStatus())) {
+                    } else if (title.equals(TitleEnum.CLOSE_CONNECTION.getStatus())) {
                         PushApplication.YOUR_CHANNEL_ID = null;
                         PushApplication.buildConOrNot = false;
                         chatContent = "抱歉，对方已断开，你们缘分已尽，请寻找其他有缘人！";
@@ -141,7 +149,7 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         // Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setIsComing(isComing);
-        if(isComing == 3) {
+        if (isComing == 3) {
             chatMessage.setDate(new Date());
             chatMessage.setDateStr(chatContent);
         } else {
@@ -153,7 +161,7 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         MainTab01.mDatas.add(chatMessage);
         MainTab01.mAdapter.notifyDataSetChanged();
         MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
-        
+
         // 红点提示
         if (MainActivity.currentIndex != 0) {
             MainActivity.mTabLiaotian.removeView(MainActivity.mBadgeViewforLiaotian);

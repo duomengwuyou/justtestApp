@@ -71,42 +71,48 @@ public class ConnectServer {
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.UPLOADINFO) + parameters;
         ConnectServer.httpUrlConnection(path, ChatConstant.DEFAULT_STR);
     }
-    
+
     public static String getUploadInfoPath(String appid, String userId, String channelId) {
         String parameters = "appid=" + appid + "&userId=" + userId + "&channelId=" + channelId;
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.UPLOADINFO) + parameters;
         return path;
     }
-    
+
+    public static String getUploadAppInfo(String ip, String channelId) {
+        String parameters = "ip=" + ip + "&channelId=" + channelId;
+        String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.UPLOAD_APP_INFO) + parameters;
+        return path;
+    }
+
     public static String getCloseCon(String appid, String userId, String channelId) {
         String parameters = "appid=" + appid + "&userId=" + userId + "&channelId=" + channelId;
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.CLOSE_CON) + parameters;
         return path;
     }
-    
+
     public static String getMoreImages(Integer displayType) {
         String parameters = "";
-        if(displayType != null) {
+        if (displayType != null) {
             parameters = "displayType=" + displayType;
         }
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.MORE_IMAGE) + parameters;
         return path;
     }
-    
+
     public static String getPicTypes() {
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.CRAWL_TYPE);
         return path;
     }
-    
+
     public static String getMoreNews(Long displayType) {
         String parameters = "";
-        if(displayType != null) {
+        if (displayType != null) {
             parameters = "displayType=" + displayType;
         }
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.MORE_NEWS) + parameters;
         return path;
     }
-    
+
     public static String getNewsTypes() {
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.NEWS_CRAWL_TYPE);
         return path;

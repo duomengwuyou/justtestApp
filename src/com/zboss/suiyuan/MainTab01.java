@@ -48,20 +48,26 @@ public class MainTab01 extends Fragment {
 
     private View rootView;
     private PushApplication mApplication;
-    private static RequestQueue requestQueue;
+    public static RequestQueue requestQueue;
     private Gson mGson;
+    
+    // 是否已经提交
+    private static boolean uploadAppInfoOrNot = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.main_tab_01, container, false);
         initView();
         initEvent();
-        requestQueue = Volley.newRequestQueue(getActivity());
+        if(requestQueue == null){
+            requestQueue = Volley.newRequestQueue(getActivity());
+        }
 
         if (mAdapter == null) {
             mAdapter = new ChatMessageAdapter(getActivity(), mDatas);
         }
         mChatMessagesListView.setAdapter(mAdapter);
+        
         return rootView;
     }
 
@@ -155,7 +161,9 @@ public class MainTab01 extends Fragment {
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
                                     // 奖励用户图片
-                                    MainTab02.loadMoreImages(true);
+                                    if(PushApplication.wifiOrNot) {
+                                        MainTab02.loadMoreImages(true);
+                                    }
                                     progressDialog.dismiss();
                                     // 找到了
                                 } else if (status == 1) {
@@ -167,14 +175,18 @@ public class MainTab01 extends Fragment {
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
                                     // 奖励用户图片
-                                    MainTab02.loadMoreImages(true);
+                                    if(PushApplication.wifiOrNot) {
+                                        MainTab02.loadMoreImages(true);
+                                    }
                                     progressDialog.dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "抱歉，目前聊天人数过多，请稍后再来！", Toast.LENGTH_SHORT).show();
                                     PushApplication.YOUR_CHANNEL_ID = null;
                                     PushApplication.buildConOrNot = false;
                                     // 奖励用户图片
-                                    MainTab02.loadMoreImages(true);
+                                    if(PushApplication.wifiOrNot) {
+                                        MainTab02.loadMoreImages(true);
+                                    }
                                     progressDialog.dismiss();
                                 }
 
@@ -183,7 +195,9 @@ public class MainTab01 extends Fragment {
                                 PushApplication.YOUR_CHANNEL_ID = null;
                                 PushApplication.buildConOrNot = false;
                                 // 奖励用户图片
-                                MainTab02.loadMoreImages(true);
+                                if(PushApplication.wifiOrNot) {
+                                    MainTab02.loadMoreImages(true);
+                                }
                                 progressDialog.dismiss();
                             }
 
@@ -196,7 +210,9 @@ public class MainTab01 extends Fragment {
                         PushApplication.YOUR_CHANNEL_ID = null;
                         PushApplication.buildConOrNot = false;
                         // 奖励用户图片
-                        MainTab02.loadMoreImages(true);
+                        if(PushApplication.wifiOrNot) {
+                            MainTab02.loadMoreImages(true);
+                        }
                         progressDialog.dismiss();
                     }
                 });

@@ -49,8 +49,12 @@ public class MainTab03 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.main_tab_03, container, false);
         cardsList = (RefreshListView) rootView.findViewById(R.id.news_cards_list);
-        activity = getActivity();
-        requestQueue = Volley.newRequestQueue(activity);
+        if(activity == null) {
+            activity = getActivity();
+        }
+        if(requestQueue == null){
+            requestQueue = Volley.newRequestQueue(activity);
+        }
         setupList();
         return rootView;
     }

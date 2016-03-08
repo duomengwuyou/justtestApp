@@ -1,15 +1,33 @@
 package com.zboss.suiyuan;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.URL;
+import java.util.Enumeration;
+
+import org.json.JSONObject;
+
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.widget.RemoteViews;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zboss.suiyuan.chat.BaiduPush;
+import com.zboss.suiyuan.chat.ConnectServer;
 import com.zboss.suiyuan.dao.MessageDB;
 import com.zboss.suiyuan.dao.UserDB;
 import com.zboss.suiyuan.utils.SharePreferenceUtil;
@@ -55,13 +73,17 @@ public class PushApplication extends Application {
     // 图片类型
     public static Integer DISPLAY_TYPE = null;
     public static Long NEWS_DISPLAY_TYPE = null;
-    
+
     // 图片选项
     public static String[] pictypes;
     public static Integer[] picids;
     // 新闻选项
     public static String[] newstypes;
     public static Integer[] newsids;
+
+    // 手机ip以及网络状态
+    public static String phoneIp;
+    public static boolean wifiOrNot = false;
 
     public synchronized static PushApplication getInstance() {
         return mApplication;
@@ -82,6 +104,113 @@ public class PushApplication extends Application {
         mNotificationManager = (NotificationManager) getSystemService(android.content.Context.NOTIFICATION_SERVICE);
         userDB = new UserDB(this);
         messageDB = new MessageDB(this);
+        GetNetIp();
+        wifiOrNot = wifiOrNot();
+    }
+
+    private boolean wifiOrNot() {
+        ConnectivityManager connectMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectMgr.getActiveNetworkInfo();
+        if (info == null) {
+            return false;
+        } else {
+            if (info.getType() == ConnectivityManager.TYPE_WIFI) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * 获取ip地址
+     * 
+     * @return
+     */
+    private String getPhoneIp() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                        return inetAddress.getHostAddress().toString();
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        return "";
+    }
+
+    public static void GetNetIp() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    String address = "http://ip.taobao.com/service/getIpInfo2.php?ip=myip";
+                    URL url = new URL(address);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(6 * 1000);
+                    connection.setUseCaches(false);
+
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        InputStream in = connection.getInputStream();
+
+                        // 将流转化为字符串
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                        String tmpString = "";
+                        StringBuilder retJSON = new StringBuilder();
+                        while ((tmpString = reader.readLine()) != null) {
+                            retJSON.append(tmpString + "\n");
+                        }
+
+                        JSONObject jsonObject = new JSONObject(retJSON.toString());
+                        String code = jsonObject.getString("code");
+                        if (code.equals("0")) {
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            phoneIp =
+                                    data.getString("ip") + "(" + data.getString("country") + data.getString("area")
+                                            + "区" + data.getString("region") + data.getString("city")
+                                            + data.getString("isp") + ")";
+
+                        } else {
+                            phoneIp = "unknown";
+                        }
+                    } else {
+                        phoneIp = "unknown";
+                    }
+                } catch (Exception e) {
+                    phoneIp = "unknown";
+                } 
+                uploadAppinfo();
+            }
+        });
+        t.start();
+    }
+    
+    
+    public static void uploadAppinfo() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    String address = ConnectServer.getUploadAppInfo(phoneIp, PushApplication.MY_CHANNEL_ID);
+                    URL url = new URL(address);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(6 * 1000);
+                    connection.setUseCaches(false);
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        InputStream in = connection.getInputStream();
+                    }
+
+                } catch (Exception e) {
+                    
+                } finally {
+                    
+                }
+            }
+        });
+        t.start();
     }
 
     public synchronized BaiduPush getBaiduPush() {

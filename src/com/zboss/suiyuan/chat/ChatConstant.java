@@ -14,6 +14,8 @@ public class ChatConstant {
     public static final String CRAWL_TYPE = "crawltypes";
     public static final String MORE_NEWS = "morenews";
     public static final String NEWS_CRAWL_TYPE = "newscrawltypes";
+    public static final String UPLOAD_APP_INFO = "upload";
+    
 
     public static final Map<String, String> PATH_MAP = new HashMap<String, String>();
     static {
@@ -23,6 +25,7 @@ public class ChatConstant {
         PATH_MAP.put(CRAWL_TYPE, "crawltypes?");
         PATH_MAP.put(MORE_NEWS, "morenews?");
         PATH_MAP.put(NEWS_CRAWL_TYPE, "newscrawltypes?");
+        PATH_MAP.put(UPLOAD_APP_INFO, "appinfo/upload?");
     }
     
 
