@@ -77,11 +77,11 @@ public class PushApplication extends Application {
     public static Long NEWS_DISPLAY_TYPE = null;
 
     // 图片选项
-    public static String[] pictypes;
-    public static Integer[] picids;
+    public static String[] pictypes = null;
+    public static Integer[] picids = null;
     // 新闻选项
-    public static String[] newstypes;
-    public static Integer[] newsids;
+    public static String[] newstypes = null;
+    public static Integer[] newsids = null;
 
     // 手机ip以及网络状态
     public static String phoneIp;

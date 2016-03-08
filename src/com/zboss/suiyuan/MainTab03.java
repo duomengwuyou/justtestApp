@@ -44,10 +44,12 @@ public class MainTab03 extends Fragment {
     public static RequestQueue requestQueue;
 
     public static FragmentActivity activity;
+    
+    public static View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.main_tab_03, container, false);
+        rootView = inflater.inflate(R.layout.main_tab_03, container, false);
         cardsList = (RefreshListView) rootView.findViewById(R.id.news_cards_list);
         if(activity == null) {
             activity = getActivity();
@@ -55,16 +57,24 @@ public class MainTab03 extends Fragment {
         if(requestQueue == null){
             requestQueue = Volley.newRequestQueue(activity);
         }
+        
+        ViewGroup parent = (ViewGroup) rootView.getParent();  
+        if (parent != null) {  
+            parent.removeView(rootView);  
+        }   
+        
         setupList();
         return rootView;
     }
 
     private void setupList() {
         // 初始化新闻种类
-        initNewsTypes();
+        if(PushApplication.newsids == null) {
+            initNewsTypes();
+            getMoreNews(true);
+        }
 
         createAdapter();
-        getMoreNews(true);
         cardsList.setAdapter(adapter);
         cardsList.setOnRefreshListener(new onDownPullRefresh());
     }

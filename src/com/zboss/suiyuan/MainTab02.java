@@ -46,11 +46,13 @@ public class MainTab02 extends Fragment {
     public static RequestQueue requestQueue;
 
     public static FragmentActivity activity;
+    
+    public static View rootView;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.main_tab_02, container, false);
+        rootView = inflater.inflate(R.layout.main_tab_02, container, false);
         cardsList = (RefreshListView) rootView.findViewById(R.id.cards_list);
         if(activity == null) {
             activity = getActivity();
@@ -58,6 +60,12 @@ public class MainTab02 extends Fragment {
         if(requestQueue == null) {
             requestQueue = Volley.newRequestQueue(activity);
         }
+        
+        ViewGroup parent = (ViewGroup) rootView.getParent();  
+        if (parent != null) {  
+            parent.removeView(rootView);  
+        } 
+        
         setupList();
         return rootView;
     }

@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -106,6 +107,7 @@ public class MainActivity extends FragmentActivity {
             public Fragment getItem(int arg0) {
                 return mFragments.get(arg0);
             }
+            
         };
 
         // 设置碎片适配器

@@ -50,9 +50,6 @@ public class MainTab01 extends Fragment {
     private PushApplication mApplication;
     public static RequestQueue requestQueue;
     private Gson mGson;
-    
-    // 是否已经提交
-    private static boolean uploadAppInfoOrNot = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +64,11 @@ public class MainTab01 extends Fragment {
             mAdapter = new ChatMessageAdapter(getActivity(), mDatas);
         }
         mChatMessagesListView.setAdapter(mAdapter);
+        
+        ViewGroup parent = (ViewGroup) rootView.getParent();  
+        if (parent != null) {  
+            parent.removeView(rootView);  
+        } 
         
         return rootView;
     }
