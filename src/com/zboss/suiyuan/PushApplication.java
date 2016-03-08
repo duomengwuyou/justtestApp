@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ import android.widget.RemoteViews;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zboss.suiyuan.chat.BaiduPush;
+import com.zboss.suiyuan.chat.ChatConstant;
 import com.zboss.suiyuan.chat.ConnectServer;
 import com.zboss.suiyuan.dao.MessageDB;
 import com.zboss.suiyuan.dao.UserDB;
@@ -104,7 +106,6 @@ public class PushApplication extends Application {
         mNotificationManager = (NotificationManager) getSystemService(android.content.Context.NOTIFICATION_SERVICE);
         userDB = new UserDB(this);
         messageDB = new MessageDB(this);
-        GetNetIp();
         wifiOrNot = wifiOrNot();
     }
 
@@ -143,75 +144,6 @@ public class PushApplication extends Application {
         return "";
     }
 
-    public static void GetNetIp() {
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    String address = "http://ip.taobao.com/service/getIpInfo2.php?ip=myip";
-                    URL url = new URL(address);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setConnectTimeout(6 * 1000);
-                    connection.setUseCaches(false);
-
-                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        InputStream in = connection.getInputStream();
-
-                        // 将流转化为字符串
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                        String tmpString = "";
-                        StringBuilder retJSON = new StringBuilder();
-                        while ((tmpString = reader.readLine()) != null) {
-                            retJSON.append(tmpString + "\n");
-                        }
-
-                        JSONObject jsonObject = new JSONObject(retJSON.toString());
-                        String code = jsonObject.getString("code");
-                        if (code.equals("0")) {
-                            JSONObject data = jsonObject.getJSONObject("data");
-                            phoneIp =
-                                    data.getString("ip") + "(" + data.getString("country") + data.getString("area")
-                                            + "区" + data.getString("region") + data.getString("city")
-                                            + data.getString("isp") + ")";
-
-                        } else {
-                            phoneIp = "unknown";
-                        }
-                    } else {
-                        phoneIp = "unknown";
-                    }
-                } catch (Exception e) {
-                    phoneIp = "unknown";
-                } 
-                uploadAppinfo();
-            }
-        });
-        t.start();
-    }
-    
-    
-    public static void uploadAppinfo() {
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    String address = ConnectServer.getUploadAppInfo(phoneIp, PushApplication.MY_CHANNEL_ID);
-                    URL url = new URL(address);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setConnectTimeout(6 * 1000);
-                    connection.setUseCaches(false);
-                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        InputStream in = connection.getInputStream();
-                    }
-
-                } catch (Exception e) {
-                    
-                } finally {
-                    
-                }
-            }
-        });
-        t.start();
-    }
 
     public synchronized BaiduPush getBaiduPush() {
         if (mBaiduPushServer == null)

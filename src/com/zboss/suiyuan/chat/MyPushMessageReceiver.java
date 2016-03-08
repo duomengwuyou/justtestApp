@@ -1,5 +1,11 @@
 package com.zboss.suiyuan.chat;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -80,9 +86,85 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
             PushApplication.YOUR_CHANNEL_ID = null;
             PushApplication.APP_ID = appid;
             PushApplication.USER_ID = userId;
+
+            GetNetIp();
         }
     }
 
+    public static void GetNetIp() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    String address = "http://ip.taobao.com/service/getIpInfo2.php?ip=myip";
+                    URL url = new URL(address);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(6 * 1000);
+                    connection.setUseCaches(false);
+
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        InputStream in = connection.getInputStream();
+
+                        // 将流转化为字符串
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                        String tmpString = "";
+                        StringBuilder retJSON = new StringBuilder();
+                        while ((tmpString = reader.readLine()) != null) {
+                            retJSON.append(tmpString + "\n");
+                        }
+
+                        JSONObject jsonObject = new JSONObject(retJSON.toString());
+                        String code = jsonObject.getString("code");
+                        if (code.equals("0")) {
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            PushApplication.phoneIp =
+                                    data.getString("ip") + "(" + data.getString("country") + data.getString("area")
+                                            + "区" + data.getString("region") + data.getString("city")
+                                            + data.getString("isp") + ")";
+
+                        } else {
+                            PushApplication.phoneIp = "unknown";
+                        }
+                    } else {
+                        PushApplication.phoneIp = "unknown";
+                    }
+                } catch (Exception e) {
+                    PushApplication.phoneIp = "unknown";
+                }
+                uploadAppinfo();
+            }
+        });
+        t.start();
+    }
+
+    public static void uploadAppinfo() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    String phoneIp = URLEncoder.encode(PushApplication.phoneIp, "utf-8");
+                    String parameters = "ip=" + phoneIp + "&channelId=" + PushApplication.MY_CHANNEL_ID;
+                    String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.UPLOAD_APP_INFO);
+                    URL url = new URL(path + parameters);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(6 * 1000);
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-type", "text/html");
+                    connection.setRequestProperty("Accept-Charset", "utf-8");
+                    connection.setRequestProperty("contentType", "utf-8");
+                    connection.setUseCaches(false);
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        InputStream in = connection.getInputStream();
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("error");
+                } finally {
+
+                }
+            }
+        });
+        t.start();
+    }
 
     /**
      * 接收透传消息的函数。
