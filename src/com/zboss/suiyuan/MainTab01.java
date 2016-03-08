@@ -41,6 +41,7 @@ public class MainTab01 extends Fragment {
     private EditText mMsgInput;
     private Button mMsgSend;
     public static Button buildCon;
+    public static Button picBtn;
 
     public static ListView mChatMessagesListView;
     public static List<ChatMessage> mDatas = new ArrayList<ChatMessage>();
@@ -81,6 +82,7 @@ public class MainTab01 extends Fragment {
         mMsgInput = (EditText) rootView.findViewById(R.id.id_chat_msg);
         mMsgSend = (Button) rootView.findViewById(R.id.id_chat_send);
         buildCon = (Button) rootView.findViewById(R.id.build_chat_con);
+        picBtn = (Button) rootView.findViewById(R.id.id_pic_send);
 
         mApplication = (PushApplication) getActivity().getApplication();
         mGson = mApplication.getGson();
