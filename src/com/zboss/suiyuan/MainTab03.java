@@ -23,6 +23,7 @@ import com.zboss.suiyuan.newspic.OnRefreshListener;
 import com.zboss.suiyuan.newspic.RefreshListView;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -31,6 +32,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -73,7 +75,7 @@ public class MainTab03 extends Fragment {
             initNewsTypes();
             getMoreNews(true);
         }
-
+        
         createAdapter();
         cardsList.setAdapter(adapter);
         cardsList.setOnRefreshListener(new onDownPullRefresh());

@@ -16,27 +16,15 @@
         android:background="@drawable/bottom_bar" >
 
         <Button
-            android:id="@+id/id_pic_send"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="2dp"
-            android:background="@drawable/chat_send_btn"
-            android:onClick="sendMessage"
-            android:text="照片" />
-        
-        <Button
             android:id="@+id/id_chat_send"
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="2dp"
-            android:visibility="gone"
             android:layout_alignParentRight="true"
             android:background="@drawable/chat_send_btn"
             android:onClick="sendMessage"
-            android:text="发送" />
+            android:text="图片" />
         
         <Button
             android:id="@+id/build_chat_con"
@@ -56,8 +44,8 @@
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/id_pic_send"
             android:layout_toRightOf="@id/build_chat_con"
+            android:layout_toLeftOf="@id/id_chat_send"
             android:background="@drawable/login_edit_normal"
             android:textSize="18sp" />
         

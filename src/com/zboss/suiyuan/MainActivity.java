@@ -45,7 +45,7 @@ import com.zboss.suiyuan.enums.TitleEnum;
 import com.zboss.suiyuan.utils.SendMsgAsyncTask;
 
 public class MainActivity extends FragmentActivity {
-    private static ViewPager mViewPager;
+    public static ViewPager mViewPager;
     private static FragmentPagerAdapter mAdapter;
     private static List<Fragment> mFragments = new ArrayList<Fragment>();
 

@@ -8,10 +8,13 @@ import com.zboss.suiyuan.R.layout;
 import com.zboss.suiyuan.bean.ChatMessage;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChatMessageAdapter extends BaseAdapter {
@@ -63,6 +66,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.createDate = (TextView) convertView.findViewById(R.id.chat_from_createDate);
                 viewHolder.content = (TextView) convertView.findViewById(R.id.chat_from_content);
                 viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_from_name);
+                viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_send_image);
                 convertView.setTag(viewHolder);
                 // 发出消息
             } else if (chatMessage.getIsComing() == 1) {
@@ -70,6 +74,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.createDate = (TextView) convertView.findViewById(R.id.chat_send_createDate);
                 viewHolder.content = (TextView) convertView.findViewById(R.id.chat_send_content);
                 viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_send_name);
+                viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_send_image);
                 convertView.setTag(viewHolder);
                 // 系统消息
             } else {
@@ -77,6 +82,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.content = (TextView) convertView.findViewById(R.id.chat_send_content);
                 viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_send_name);
                 viewHolder.createDate = (TextView) convertView.findViewById(R.id.chat_send_createDate);
+                viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_send_image);
                 convertView.setTag(viewHolder);
             }
 
@@ -86,20 +92,37 @@ public class ChatMessageAdapter extends BaseAdapter {
 
         // 非系统消息
         if (chatMessage.getIsComing() != 3) {
-            viewHolder.content.setVisibility(View.VISIBLE);
-            viewHolder.nickname.setVisibility(View.VISIBLE);
-            if(convertView.findViewById(R.id.chat_send_icon) != null) {
-                convertView.findViewById(R.id.chat_send_icon).setVisibility(View.VISIBLE);
+            // 判断当前是否是图片类型
+            if (chatMessage.getImagePath() != null) {
+                Bitmap bm = BitmapFactory.decodeFile(chatMessage.getImagePath());
+                viewHolder.chatImage.setImageBitmap(bm);
+                viewHolder.chatImage.setVisibility(View.VISIBLE);
+
+                viewHolder.content.setVisibility(View.GONE);
+                viewHolder.nickname.setVisibility(View.VISIBLE);
+                if (convertView.findViewById(R.id.chat_send_icon) != null) {
+                    convertView.findViewById(R.id.chat_send_icon).setVisibility(View.VISIBLE);
+                }
+                viewHolder.createDate.setText(chatMessage.getDateStr());
+                viewHolder.nickname.setText(chatMessage.getNickname());
+            } else {
+                viewHolder.chatImage.setVisibility(View.GONE);
+                viewHolder.content.setVisibility(View.VISIBLE);
+                viewHolder.nickname.setVisibility(View.VISIBLE);
+                if (convertView.findViewById(R.id.chat_send_icon) != null) {
+                    convertView.findViewById(R.id.chat_send_icon).setVisibility(View.VISIBLE);
+                }
+
+                viewHolder.content.setText(chatMessage.getMessage());
+                viewHolder.createDate.setText(chatMessage.getDateStr());
+                viewHolder.nickname.setText(chatMessage.getNickname());
             }
-            
-            viewHolder.content.setText(chatMessage.getMessage());
-            viewHolder.createDate.setText(chatMessage.getDateStr());
-            viewHolder.nickname.setText(chatMessage.getNickname());
             // 系统消息
         } else {
             viewHolder.createDate.setText(chatMessage.getDateStr());
-            
+
             viewHolder.content.setVisibility(View.GONE);
+            viewHolder.chatImage.setVisibility(View.GONE);
             viewHolder.nickname.setVisibility(View.GONE);
             convertView.findViewById(R.id.chat_send_icon).setVisibility(View.GONE);
         }
@@ -111,6 +134,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         public TextView createDate;
         public TextView nickname;
         public TextView content;
+        public ImageView chatImage;
     }
 
 }

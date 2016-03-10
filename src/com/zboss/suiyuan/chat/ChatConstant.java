@@ -7,6 +7,9 @@ public class ChatConstant {
     public static final String IP_PORT = "http://101.200.127.223:8082/";
     public static final String DEFAULT_STR = "";
     
+    public static final String PIC = "图片";
+    public static final String SEND = "发送";
+    
     
     public static final String UPLOADINFO = "uploadinfo";
     public static final String CLOSE_CON = "closecon";

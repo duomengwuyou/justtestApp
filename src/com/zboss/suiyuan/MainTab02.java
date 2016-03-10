@@ -22,6 +22,7 @@ import com.zboss.suiyuan.newspic.OnRefreshListener;
 import com.zboss.suiyuan.newspic.RefreshListView;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -31,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -79,6 +81,7 @@ public class MainTab02 extends Fragment {
         cardsList.setAdapter(adapter);
         cardsList.setOnRefreshListener(new onDownPullRefresh());
     }
+    
 
     private CardsAdapter createAdapter() {
         ArrayList<PictureObj> items = new ArrayList<PictureObj>();

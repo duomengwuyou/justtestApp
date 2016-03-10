@@ -10,6 +10,8 @@ public class ChatMessage {
     private String userId;
     private int icon;
 
+    private String imagePath; // 图片路径
+
     public void setDateStr(String dateStr) {
         this.dateStr = dateStr;
     }
@@ -93,6 +95,14 @@ public class ChatMessage {
 
     public void setReaded(boolean readed) {
         this.readed = readed;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
 }
