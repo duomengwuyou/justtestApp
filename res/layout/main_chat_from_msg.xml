@@ -24,8 +24,8 @@
 
             <ImageView
                 android:id="@+id/chat_from_icon"
-                android:layout_width="49dp"
-                android:layout_height="49dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/icon" />
             
             <ImageView
@@ -45,10 +45,10 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:lineSpacingExtra="2dp"
-                android:minHeight="50dp"
+                android:minHeight="36dp"
                 android:text="随缘"
                 android:textColor="#000"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
         <TextView
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:textColor="#444"
             android:text="随缘"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
     </LinearLayout>
 
 </LinearLayout>
