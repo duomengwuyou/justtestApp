@@ -66,7 +66,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.createDate = (TextView) convertView.findViewById(R.id.chat_from_createDate);
                 viewHolder.content = (TextView) convertView.findViewById(R.id.chat_from_content);
                 viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_from_name);
-                viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_send_image);
+                viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_from_image);
                 convertView.setTag(viewHolder);
                 // 发出消息
             } else if (chatMessage.getIsComing() == 1) {

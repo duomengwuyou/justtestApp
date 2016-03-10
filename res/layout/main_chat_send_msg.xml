@@ -47,7 +47,6 @@
                     android:layout_height="100dp"
                     android:background="@drawable/chat_send_msg"
                     android:visibility="gone"
-                    android:layout_marginRight="10dp"
                     android:src="@drawable/my" />
 
                 <ImageView

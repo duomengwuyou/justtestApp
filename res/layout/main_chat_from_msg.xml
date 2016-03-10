@@ -27,6 +27,14 @@
                 android:layout_width="49dp"
                 android:layout_height="49dp"
                 android:src="@drawable/icon" />
+            
+            <ImageView
+                    android:id="@+id/chat_from_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/chat_from_msg"
+                    android:visibility="gone"
+                    android:src="@drawable/my" />
 
             <TextView
                 android:id="@+id/chat_from_content"

@@ -107,6 +107,12 @@ public class MainTab01 extends Fragment {
         mMsgInput = (EditText) rootView.findViewById(R.id.id_chat_msg);
         mMsgSend = (Button) rootView.findViewById(R.id.id_chat_send);
         buildCon = (Button) rootView.findViewById(R.id.build_chat_con);
+        
+        if(PushApplication.buildConOrNot) {
+            buildCon.setText("断开");
+        }else{
+            buildCon.setText("连接");
+        }
 
         mApplication = (PushApplication) getActivity().getApplication();
         mGson = mApplication.getGson();
