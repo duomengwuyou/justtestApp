@@ -3,12 +3,15 @@ package com.zboss.suiyuan.bean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.graphics.Bitmap;
+
 public class ChatMessage {
     private String message;
     private int isComing; // 1 发出 2 收到 3系统
     private Date date;
     private String userId;
     private int icon;
+    private Bitmap bitmap; // 图片文件
 
     private String imagePath; // 图片路径
 
@@ -105,4 +108,12 @@ public class ChatMessage {
         this.imagePath = imagePath;
     }
 
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+    
 }

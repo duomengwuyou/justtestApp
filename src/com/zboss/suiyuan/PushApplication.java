@@ -25,6 +25,10 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.widget.RemoteViews;
 
+import com.alibaba.sdk.android.oss.OSS;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zboss.suiyuan.chat.BaiduPush;
@@ -86,6 +90,15 @@ public class PushApplication extends Application {
     // 手机ip以及网络状态
     public static String phoneIp;
     public static boolean wifiOrNot = false;
+    
+    // oss配置
+    public static String endpoint = "http://oss-cn-beijing.aliyuncs.com";
+    public static String accessKey = "F1EiuNOYlilE6D7S";
+    public static String accessSecret = "WCFB4JpKKEqyHUTqWtKKNQCa0ryhv7";
+    public static String bucketName = "zbosssuiyuan";
+    
+    // 凭证提供
+    public static OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(accessKey, accessSecret);
 
     public synchronized static PushApplication getInstance() {
         return mApplication;

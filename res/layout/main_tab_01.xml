@@ -17,8 +17,9 @@
 
         <Button
             android:id="@+id/id_chat_send"
-            android:layout_width="60dp"
+            android:layout_width="56dp"
             android:layout_height="40dp"
+            android:textSize="15dip"
             android:layout_centerVertical="true"
             android:layout_marginRight="2dp"
             android:layout_alignParentRight="true"
@@ -28,8 +29,9 @@
         
         <Button
             android:id="@+id/build_chat_con"
-            android:layout_width="60dp"
+            android:layout_width="56dp"
             android:layout_height="40dp"
+            android:textSize="15dip"
             android:layout_centerVertical="true"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
@@ -47,7 +49,7 @@
             android:layout_toRightOf="@id/build_chat_con"
             android:layout_toLeftOf="@id/id_chat_send"
             android:background="@drawable/login_edit_normal"
-            android:textSize="18sp" />
+            android:textSize="16dip" />
         
         
     </RelativeLayout>

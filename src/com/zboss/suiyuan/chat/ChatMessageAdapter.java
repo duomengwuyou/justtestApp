@@ -93,10 +93,17 @@ public class ChatMessageAdapter extends BaseAdapter {
         // 非系统消息
         if (chatMessage.getIsComing() != 3) {
             // 判断当前是否是图片类型
-            if (chatMessage.getImagePath() != null) {
-                Bitmap bm = BitmapFactory.decodeFile(chatMessage.getImagePath());
+            if (chatMessage.getImagePath() != null || chatMessage.getBitmap() != null) {
+                Bitmap bm = null;
+                if(chatMessage.getImagePath() != null) {
+                    bm = BitmapFactory.decodeFile(chatMessage.getImagePath());
+                }
+                if(chatMessage.getBitmap() != null) {
+                    bm = chatMessage.getBitmap();
+                }
                 viewHolder.chatImage.setImageBitmap(bm);
                 viewHolder.chatImage.setVisibility(View.VISIBLE);
+                viewHolder.createDate.setVisibility(View.VISIBLE);
 
                 viewHolder.content.setVisibility(View.GONE);
                 viewHolder.nickname.setVisibility(View.VISIBLE);
@@ -109,6 +116,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.chatImage.setVisibility(View.GONE);
                 viewHolder.content.setVisibility(View.VISIBLE);
                 viewHolder.nickname.setVisibility(View.VISIBLE);
+                viewHolder.createDate.setVisibility(View.VISIBLE);
                 if (convertView.findViewById(R.id.chat_send_icon) != null) {
                     convertView.findViewById(R.id.chat_send_icon).setVisibility(View.VISIBLE);
                 }
@@ -117,7 +125,6 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.createDate.setText(chatMessage.getDateStr());
                 viewHolder.nickname.setText(chatMessage.getNickname());
             }
-            // 系统消息
         } else {
             viewHolder.createDate.setText(chatMessage.getDateStr());
 

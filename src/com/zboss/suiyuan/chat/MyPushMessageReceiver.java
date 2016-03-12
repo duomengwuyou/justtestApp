@@ -1,6 +1,9 @@
 package com.zboss.suiyuan.chat;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -16,10 +19,22 @@ import org.json.JSONObject;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSS;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.GetObjectRequest;
+import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -60,6 +75,9 @@ import com.zboss.suiyuan.enums.TitleEnum;
 public class MyPushMessageReceiver extends PushMessageReceiver {
     /** TAG to Log */
     public static final String TAG = MyPushMessageReceiver.class.getSimpleName();
+
+    // 记录上次收到信息的时间
+    public static Long lastTime = null;
 
     /**
      * 调用PushManager.startWork后，sdk将对push server发起绑定请求，这个过程是异步的。绑定请求的结果通过onBind返回。 如果您需要用单播推送，需要把这里获取的channel id和user
@@ -221,6 +239,10 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                         chatContent = "抱歉，对方已断开，你们缘分已尽，请寻找其他有缘人！";
                         MainTab01.buildCon.setText("连接");
                         isComing = 3;
+                    } else if (title.equals(TitleEnum.PIC_SUCCESS.getStatus())) {
+                        downloadImage(chatContent);
+                        chatContent = "接收到对方图片，加载中......";
+                        isComing = 3;
                     }
                 }
             } catch (JSONException e) {
@@ -244,6 +266,10 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         MainTab01.mAdapter.notifyDataSetChanged();
         MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
 
+        showRedPoint();
+    }
+
+    private void showRedPoint() {
         // 红点提示
         if (MainActivity.currentIndex != 0) {
             MainActivity.mTabLiaotian.removeView(MainActivity.mBadgeViewforLiaotian);
@@ -251,6 +277,62 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
             MainActivity.mBadgeViewforLiaotian.setBadgeCount(nowCount + 1);
             MainActivity.mTabLiaotian.addView(MainActivity.mBadgeViewforLiaotian);
         }
+    }
+
+    // 异步下载图片
+    private void downloadImage(final String picPath) {
+        GetObjectRequest get = new GetObjectRequest(PushApplication.bucketName, picPath);
+        OSS oss = new OSSClient(MainTab01.activity, PushApplication.endpoint, PushApplication.credentialProvider);
+
+        OSSAsyncTask task = oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
+            @Override
+            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
+                try {
+                    // 请求成功
+                    InputStream inputStream = result.getObjectContent();
+                    BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+                    bitmapOptions.inSampleSize = 4;
+                    Bitmap img = BitmapFactory.decodeStream(inputStream,null,bitmapOptions);
+
+                    // 接收消息
+                    final ChatMessage chatMessage = new ChatMessage();
+                    chatMessage.setIsComing(2);
+                    chatMessage.setBitmap(img);
+                    chatMessage.setDate(new Date());
+                    chatMessage.setNickname("有缘人");
+                    chatMessage.setReaded(true);
+
+                    new Handler(MainTab01.activity.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainTab01.mDatas.add(chatMessage);
+                            MainTab01.mAdapter.notifyDataSetChanged();
+                            MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e.getLocalizedMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(GetObjectRequest request, ClientException clientExcepion,
+                    ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+            }
+
+        });
     }
 
     /**

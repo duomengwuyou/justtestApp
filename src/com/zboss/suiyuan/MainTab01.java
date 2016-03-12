@@ -7,6 +7,15 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSS;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.callback.OSSProgressCallback;
+import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,7 +28,9 @@ import com.zboss.suiyuan.bean.Message;
 import com.zboss.suiyuan.chat.ChatConstant;
 import com.zboss.suiyuan.chat.ChatMessageAdapter;
 import com.zboss.suiyuan.chat.ConnectServer;
+import com.zboss.suiyuan.chat.PutObjectSamples;
 import com.zboss.suiyuan.enums.TitleEnum;
+import com.zboss.suiyuan.utils.GeneralUtil;
 import com.zboss.suiyuan.utils.SendMsgAsyncTask;
 
 import android.app.Activity;
@@ -29,6 +40,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MotionEventCompat;
@@ -70,7 +82,7 @@ public class MainTab01 extends Fragment {
      * 选择文件
      */
     public static final int TO_SELECT_PHOTO = 3;
-    
+
     private String picPath = null;
 
     @Override
@@ -107,10 +119,10 @@ public class MainTab01 extends Fragment {
         mMsgInput = (EditText) rootView.findViewById(R.id.id_chat_msg);
         mMsgSend = (Button) rootView.findViewById(R.id.id_chat_send);
         buildCon = (Button) rootView.findViewById(R.id.build_chat_con);
-        
-        if(PushApplication.buildConOrNot) {
+
+        if (PushApplication.buildConOrNot) {
             buildCon.setText("断开");
-        }else{
+        } else {
             buildCon.setText("连接");
         }
 
@@ -122,12 +134,12 @@ public class MainTab01 extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && requestCode == TO_SELECT_PHOTO) {
             picPath = data.getStringExtra(SelectPicActivity.KEY_PHOTO_PATH);
-            //Bitmap bm = BitmapFactory.decodeFile(picPath);
+            // Bitmap bm = BitmapFactory.decodeFile(picPath);
             sendPic(picPath);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    
+
     // 发送图片给对方
     private void sendPic(String picPath) {
         ChatMessage chatMessage = new ChatMessage();
@@ -139,6 +151,63 @@ public class MainTab01 extends Fragment {
         mDatas.add(chatMessage);
         mAdapter.notifyDataSetChanged();
         mChatMessagesListView.setSelection(mDatas.size() - 1);
+
+        // 上传图片到服务器
+        uploadFileToOSS(picPath);
+    }
+
+    // 上传图片到服务器
+    private void uploadFileToOSS(String picPath) {
+        final String randomKey = GeneralUtil.getRandomString(16);
+        OSS oss = new OSSClient(getActivity(), PushApplication.endpoint, PushApplication.credentialProvider);
+        PutObjectRequest put = new PutObjectRequest(PushApplication.bucketName, randomKey, picPath);
+
+        OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                sendNoticeMessage(TitleEnum.PIC_SUCCESS, randomKey);
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                    sendNoticeMessage(TitleEnum.PIC_FAIL, randomKey);
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    sendNoticeMessage(TitleEnum.PIC_FAIL, randomKey);
+                }
+            }
+        });
+    }
+    
+    // 发送通知消息
+    private void sendNoticeMessage(TitleEnum msg, String randomKey) {
+        
+        if(msg == TitleEnum.PIC_SUCCESS) {
+            // 构建新的会话
+            Message message = new Message(randomKey, PushApplication.YOUR_CHANNEL_ID);
+            message.setTitle(msg.getStatus());
+            
+            // 发送消息
+            Looper.prepare();
+            SendMsgAsyncTask newTask =
+                    new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
+            newTask.send();
+            
+            // 界面上失败
+            Toast.makeText(activity, "图片发送成功！", Toast.LENGTH_SHORT).show();
+            Looper.loop(); 
+        } else {
+            // 界面上失败
+            Looper.prepare();
+            Toast.makeText(activity, "抱歉，图片发送失败，请重新发送！", Toast.LENGTH_SHORT).show();
+            Looper.loop(); 
+        }
+
     }
 
     /**

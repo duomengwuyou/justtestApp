@@ -19,8 +19,8 @@
                 >
                 
                 <com.zboss.suiyuan.newspic.XCRoundRectImageView 
-                    android:layout_width="30dp" 
-    				android:layout_height="30dp" 
+                    android:layout_width="26dp" 
+    				android:layout_height="26dp" 
     				android:layout_centerInParent="true"
     				android:src="@drawable/ic_launcher"
                     />
@@ -30,7 +30,7 @@
     				android:layout_height="wrap_content" 
     				android:text="随缘吧"
     				android:layout_marginLeft="10dip"
-    				android:textSize="20dp"
+    				android:textSize="18dp"
     				android:textColor="@color/lightgray"
                     />
             </LinearLayout>
@@ -59,24 +59,24 @@
                     />
                   -->
                   <ImageView 
-                    android:layout_width="30dp" 
-    				android:layout_height="30dp"
+                    android:layout_width="26dp" 
+    				android:layout_height="26dp"
     				android:visibility="gone" 
     				android:id="@+id/liaotianset"
     				android:src="@drawable/abc_ic_search"
                     />
                   
                   <ImageView 
-                    android:layout_width="30dp" 
-    				android:layout_height="30dp"
+                    android:layout_width="26dp" 
+    				android:layout_height="26dp"
     				android:visibility="gone" 
     				android:id="@+id/newsset"
     				android:src="@drawable/actionbar_more_icon"
                     />
                   
                   <ImageView 
-                    android:layout_width="30dp" 
-    				android:layout_height="30dp"
+                    android:layout_width="26dp" 
+    				android:layout_height="26dp"
     				android:visibility="gone" 
     				android:id="@+id/set"
     				android:src="@drawable/actionbar_more_icon"
