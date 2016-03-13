@@ -158,7 +158,7 @@ public class MainTab01 extends Fragment {
 
     // 上传图片到服务器
     private void uploadFileToOSS(String picPath) {
-        final String randomKey = GeneralUtil.getRandomString(16);
+        final String randomKey = PushApplication.MY_CHANNEL_ID + "_" + GeneralUtil.getRandomString(10);
         OSS oss = new OSSClient(getActivity(), PushApplication.endpoint, PushApplication.credentialProvider);
         PutObjectRequest put = new PutObjectRequest(PushApplication.bucketName, randomKey, picPath);
 
@@ -169,7 +169,8 @@ public class MainTab01 extends Fragment {
             }
 
             @Override
-            public void onFailure(PutObjectRequest request, ClientException clientExcepion, ServiceException serviceException) {
+            public void onFailure(PutObjectRequest request, ClientException clientExcepion,
+                    ServiceException serviceException) {
                 // 请求异常
                 if (clientExcepion != null) {
                     // 本地异常如网络异常等
@@ -183,29 +184,28 @@ public class MainTab01 extends Fragment {
             }
         });
     }
-    
+
     // 发送通知消息
     private void sendNoticeMessage(TitleEnum msg, String randomKey) {
-        
-        if(msg == TitleEnum.PIC_SUCCESS) {
+
+        if (msg == TitleEnum.PIC_SUCCESS) {
             // 构建新的会话
             Message message = new Message(randomKey, PushApplication.YOUR_CHANNEL_ID);
             message.setTitle(msg.getStatus());
-            
+
             // 发送消息
             Looper.prepare();
-            SendMsgAsyncTask newTask =
-                    new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
+            SendMsgAsyncTask newTask = new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
             newTask.send();
-            
+
             // 界面上失败
             Toast.makeText(activity, "图片发送成功！", Toast.LENGTH_SHORT).show();
-            Looper.loop(); 
+            Looper.loop();
         } else {
             // 界面上失败
             Looper.prepare();
             Toast.makeText(activity, "抱歉，图片发送失败，请重新发送！", Toast.LENGTH_SHORT).show();
-            Looper.loop(); 
+            Looper.loop();
         }
 
     }

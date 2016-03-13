@@ -31,13 +31,16 @@
         android:label="@string/app_name"
         android:theme="@style/MyAppTheme" >
         <activity
-            android:name="com.zboss.suiyuan.MainActivity"
+            android:name="com.zboss.suiyuan.SplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        
+        <activity android:name="com.zboss.suiyuan.MainActivity" >
         </activity>
         <activity android:name="com.zboss.suiyuan.SinglePic" >
         </activity>
