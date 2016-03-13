@@ -30,8 +30,8 @@
             
             <ImageView
                     android:id="@+id/chat_from_image"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:background="@drawable/chat_from_msg"
                     android:visibility="gone"
                     android:src="@drawable/my" />

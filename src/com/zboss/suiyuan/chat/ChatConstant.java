@@ -3,12 +3,17 @@ package com.zboss.suiyuan.chat;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.graphics.Bitmap;
+
 public class ChatConstant {
     public static final String IP_PORT = "http://101.200.127.223:8082/";
     public static final String DEFAULT_STR = "";
     
     public static final String PIC = "图片";
     public static final String SEND = "发送";
+    
+    // 传递图片
+    public static Bitmap bitMap = null;
     
     
     public static final String UPLOADINFO = "uploadinfo";

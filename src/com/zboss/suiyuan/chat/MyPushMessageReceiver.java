@@ -79,6 +79,8 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
     // 记录上次收到信息的时间
     public static Long lastTime = null;
 
+    public static long timeInternal = 1000 * 30;
+
     /**
      * 调用PushManager.startWork后，sdk将对push server发起绑定请求，这个过程是异步的。绑定请求的结果通过onBind返回。 如果您需要用单播推送，需要把这里获取的channel id和user
      * id上传到应用server中，再调用server接口用channel id和user id给单个手机或者用户推送。
@@ -249,6 +251,9 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                 e.printStackTrace();
             }
         }
+        
+        // 发送时间
+        sendTime();
 
         // Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
         ChatMessage chatMessage = new ChatMessage();
@@ -265,8 +270,19 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         MainTab01.mDatas.add(chatMessage);
         MainTab01.mAdapter.notifyDataSetChanged();
         MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
-
         showRedPoint();
+    }
+
+    private void sendTime() {
+        if (lastTime == null || (System.currentTimeMillis() - lastTime > timeInternal)) {
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setIsComing(3);
+            chatMessage.setDate(new Date());
+            MainTab01.mDatas.add(chatMessage);
+            MainTab01.mAdapter.notifyDataSetChanged();
+            MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
+            lastTime = System.currentTimeMillis();
+        }
     }
 
     private void showRedPoint() {
@@ -292,7 +308,7 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                     InputStream inputStream = result.getObjectContent();
                     BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
                     bitmapOptions.inSampleSize = 4;
-                    Bitmap img = BitmapFactory.decodeStream(inputStream,null,bitmapOptions);
+                    Bitmap img = BitmapFactory.decodeStream(inputStream, null, bitmapOptions);
 
                     // 接收消息
                     final ChatMessage chatMessage = new ChatMessage();
@@ -308,6 +324,7 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                             MainTab01.mDatas.add(chatMessage);
                             MainTab01.mAdapter.notifyDataSetChanged();
                             MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
+                            showRedPoint();
                         }
                     });
                 } catch (Exception e) {

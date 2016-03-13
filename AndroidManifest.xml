@@ -43,6 +43,10 @@
         </activity>
         
         <activity
+            android:name="com.zboss.suiyuan.ChatSinglePic" >
+        </activity>
+        
+        <activity
             android:name="com.zboss.suiyuan.SingleNews" >
         </activity>
         
