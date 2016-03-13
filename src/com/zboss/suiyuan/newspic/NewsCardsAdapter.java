@@ -3,29 +3,17 @@ package com.zboss.suiyuan.newspic;
 
 import java.util.List;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.ImageLoader.ImageCache;
-import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.Volley;
 import com.zboss.suiyuan.R;
 import com.zboss.suiyuan.SingleNews;
-import com.zboss.suiyuan.SinglePic;
 import com.zboss.suiyuan.bean.NewsObj;
-import com.zboss.suiyuan.bean.PictureObj;
-
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class NewsCardsAdapter extends BaseAdapter {
 

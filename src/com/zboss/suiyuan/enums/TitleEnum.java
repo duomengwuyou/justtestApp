@@ -1,5 +1,11 @@
 package com.zboss.suiyuan.enums;
 
+/**
+ * 消息标题
+ * 
+ * @author xinglong
+ *
+ */
 public enum TitleEnum {
     BUILD_CONNECTION("1", "建立连接"), CLOSE_CONNECTION("2", "释放连接"), PIC_SUCCESS("3", "图片上传成功"), PIC_FAIL("4", "图片上传失败");
 

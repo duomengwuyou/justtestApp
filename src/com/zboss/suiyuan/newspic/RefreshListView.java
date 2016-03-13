@@ -1,22 +1,16 @@
 package com.zboss.suiyuan.newspic;
 
-import java.text.SimpleDateFormat;
-
 import com.zboss.suiyuan.R;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class RefreshListView extends ListView implements OnScrollListener {
 

@@ -1,28 +1,18 @@
 package com.zboss.suiyuan;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Date;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.zboss.suiyuan.newspic.CardsAdapter;
 import com.zboss.suiyuan.newspic.ZoomImageView;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.util.LruCache;
-import android.view.View;
 import android.widget.Toast;
 
 public class SinglePic extends Activity {

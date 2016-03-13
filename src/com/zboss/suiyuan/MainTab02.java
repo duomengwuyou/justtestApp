@@ -1,9 +1,6 @@
 package com.zboss.suiyuan;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,15 +11,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.zboss.suiyuan.bean.DisplayItem;
 import com.zboss.suiyuan.bean.PictureObj;
 import com.zboss.suiyuan.chat.ConnectServer;
 import com.zboss.suiyuan.newspic.CardsAdapter;
 import com.zboss.suiyuan.newspic.OnRefreshListener;
 import com.zboss.suiyuan.newspic.RefreshListView;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -31,13 +25,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class MainTab02 extends Fragment {
 

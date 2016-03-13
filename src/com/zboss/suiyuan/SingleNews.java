@@ -3,7 +3,6 @@ package com.zboss.suiyuan;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-import android.graphics.Bitmap;
 
 public class SingleNews extends Activity {
 

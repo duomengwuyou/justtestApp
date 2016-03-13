@@ -4,18 +4,12 @@ import java.util.List;
 
 import com.zboss.suiyuan.ChatSinglePic;
 import com.zboss.suiyuan.R;
-import com.zboss.suiyuan.SinglePic;
-import com.zboss.suiyuan.R.id;
-import com.zboss.suiyuan.R.layout;
 import com.zboss.suiyuan.bean.ChatMessage;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +18,18 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * 聊天记录适配器
+ * 
+ * @author xinglong
+ *
+ */
 public class ChatMessageAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<ChatMessage> mDatas;
 
     private final Context staticContext;
+
     public ChatMessageAdapter(Context context, List<ChatMessage> datas) {
         this.staticContext = context;
         mInflater = LayoutInflater.from(context);
@@ -98,19 +99,18 @@ public class ChatMessageAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        
-        
+
         // 获取图片 转换为bitmap
         Bitmap bm = null;
         if (chatMessage.getImagePath() != null || chatMessage.getBitmap() != null) {
-            if(chatMessage.getImagePath() != null) {
+            if (chatMessage.getImagePath() != null) {
                 bm = BitmapFactory.decodeFile(chatMessage.getImagePath());
             }
-            if(chatMessage.getBitmap() != null) {
+            if (chatMessage.getBitmap() != null) {
                 bm = chatMessage.getBitmap();
             }
         }
-        
+
         // 用于活动间传递bitmap
         final Bitmap deliverBitMap = bm;
         viewHolder.chatImage.setOnClickListener(new OnClickListener() {
@@ -121,7 +121,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 staticContext.startActivity(intent);
             }
         });
-        
+
         // 非系统消息
         if (chatMessage.getIsComing() != 3) {
             // 判断当前是否是图片类型

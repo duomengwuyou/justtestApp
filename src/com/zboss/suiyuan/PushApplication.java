@@ -1,18 +1,9 @@
 package com.zboss.suiyuan;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.NetworkInterface;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Enumeration;
-
-import org.json.JSONObject;
 
 import android.app.Application;
 import android.app.Notification;
@@ -22,20 +13,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.widget.RemoteViews;
 
-import com.alibaba.sdk.android.oss.OSS;
-import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zboss.suiyuan.chat.BaiduPush;
-import com.zboss.suiyuan.chat.ChatConstant;
-import com.zboss.suiyuan.chat.ConnectServer;
-import com.zboss.suiyuan.dao.MessageDB;
-import com.zboss.suiyuan.dao.UserDB;
 import com.zboss.suiyuan.utils.SharePreferenceUtil;
 
 public class PushApplication extends Application {
@@ -65,9 +49,6 @@ public class PushApplication extends Application {
     private NotificationManager mNotificationManager;
     private Notification mNotification;
     private Gson mGson;
-
-    private UserDB userDB;
-    private MessageDB messageDB;
 
     // 自己和对方的channelid
     public static String MY_CHANNEL_ID = "";
@@ -116,9 +97,6 @@ public class PushApplication extends Application {
         // 不转换没有 @Expose 注解的字段
         mGson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         mSpUtil = new SharePreferenceUtil(this, SP_FILE_NAME);
-        mNotificationManager = (NotificationManager) getSystemService(android.content.Context.NOTIFICATION_SERVICE);
-        userDB = new UserDB(this);
-        messageDB = new MessageDB(this);
         wifiOrNot = wifiOrNot();
     }
 
@@ -214,14 +192,6 @@ public class PushApplication extends Application {
         mNotification.contentIntent = contentIntent;
 
         mNotificationManager.notify(0x000, mNotification);
-    }
-
-    public MessageDB getMessageDB() {
-        return messageDB;
-    }
-
-    public UserDB getUserDB() {
-        return userDB;
     }
 
 }

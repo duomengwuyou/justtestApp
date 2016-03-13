@@ -1,9 +1,6 @@
 package com.zboss.suiyuan.chat;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -16,17 +13,12 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
@@ -35,17 +27,11 @@ import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
 import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
 import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.alibaba.sdk.android.oss.model.GetObjectResult;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.baidu.android.pushservice.PushMessageReceiver;
 import com.zboss.suiyuan.MainActivity;
 import com.zboss.suiyuan.MainTab01;
-import com.zboss.suiyuan.MainTab02;
 import com.zboss.suiyuan.PushApplication;
 import com.zboss.suiyuan.bean.ChatMessage;
-import com.zboss.suiyuan.bean.Message;
 import com.zboss.suiyuan.enums.TitleEnum;
 
 /*

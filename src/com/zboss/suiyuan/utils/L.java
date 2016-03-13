@@ -2,17 +2,10 @@ package com.zboss.suiyuan.utils;
 
 import android.util.Log;
 
-/**
- * Logͳһ������
- * 
- * @author way
- * 
- */
 public class L {
-	public static boolean isDebug = true;// �Ƿ���Ҫ��ӡbug��������application��onCreate���������ʼ��
+	public static boolean isDebug = true;
 	private static final String TAG = "way";
 
-	// �����ĸ���Ĭ��tag�ĺ���
 	public static void i(String msg) {
 		if (isDebug)
 			Log.i(TAG, msg);
@@ -33,7 +26,6 @@ public class L {
 			Log.v(TAG, msg);
 	}
 
-	// �����Ǵ����Զ���tag�ĺ���
 	public static void i(String tag, String msg) {
 		if (isDebug)
 			Log.i(tag, msg);

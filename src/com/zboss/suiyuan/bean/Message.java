@@ -1,9 +1,14 @@
 package com.zboss.suiyuan.bean;
 
 import java.io.Serializable;
-
 import com.google.gson.annotations.Expose;
 
+/**
+ * 百度云推送信息
+ * 
+ * @author xinglong
+ *
+ */
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -36,7 +41,7 @@ public class Message implements Serializable {
         this.title = "none";
         this.description = message;
     }
-    
+
     public Message(String message, String channelId) {
         super();
         this.channelId = channelId;
@@ -107,5 +112,5 @@ public class Message implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
 }

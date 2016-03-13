@@ -2,20 +2,24 @@ package com.zboss.suiyuan.chat;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import android.graphics.Bitmap;
 
+/**
+ * 服务接口
+ * 
+ * @author xinglong
+ *
+ */
 public class ChatConstant {
     public static final String IP_PORT = "http://101.200.127.223:8082/";
     public static final String DEFAULT_STR = "";
-    
+
     public static final String PIC = "图片";
     public static final String SEND = "发送";
-    
+
     // 传递图片
     public static Bitmap bitMap = null;
-    
-    
+
     public static final String UPLOADINFO = "uploadinfo";
     public static final String CLOSE_CON = "closecon";
     public static final String MORE_IMAGE = "moreimage";
@@ -23,7 +27,6 @@ public class ChatConstant {
     public static final String MORE_NEWS = "morenews";
     public static final String NEWS_CRAWL_TYPE = "newscrawltypes";
     public static final String UPLOAD_APP_INFO = "upload";
-    
 
     public static final Map<String, String> PATH_MAP = new HashMap<String, String>();
     static {
@@ -35,6 +38,5 @@ public class ChatConstant {
         PATH_MAP.put(NEWS_CRAWL_TYPE, "newscrawltypes?");
         PATH_MAP.put(UPLOAD_APP_INFO, "appinfo/upload?");
     }
-    
 
 }

@@ -4,16 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 
-import com.zboss.suiyuan.bean.ChatMessage;
 import com.zboss.suiyuan.chat.ChatConstant;
-import com.zboss.suiyuan.newspic.ZoomImageView;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;

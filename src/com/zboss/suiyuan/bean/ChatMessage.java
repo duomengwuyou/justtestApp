@@ -1,15 +1,17 @@
 package com.zboss.suiyuan.bean;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-public class ChatMessage{
-    
+/**
+ * 聊天内容
+ * 
+ * @author xinglong
+ *
+ */
+public class ChatMessage {
+
     private String message;
     private int isComing; // 1 发出 2 收到 3系统
     private Date date;

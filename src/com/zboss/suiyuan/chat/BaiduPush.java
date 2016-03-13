@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -14,7 +13,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.zboss.suiyuan.PushApplication;
-
 /**
  * 百度推送的实现代码
  * 

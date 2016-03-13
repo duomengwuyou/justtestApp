@@ -1,5 +1,11 @@
 package com.zboss.suiyuan.bean;
 
+/**
+ * 图片对象
+ * 
+ * @author xinglong
+ *
+ */
 public class PictureObj {
     private String title;
     private String pic;

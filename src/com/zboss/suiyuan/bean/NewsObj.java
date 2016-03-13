@@ -1,5 +1,11 @@
 package com.zboss.suiyuan.bean;
 
+/**
+ * 新闻对象
+ * 
+ * @author xinglong
+ *
+ */
 public class NewsObj {
     private String website;
     private String content;
