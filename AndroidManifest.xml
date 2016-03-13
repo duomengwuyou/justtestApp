@@ -4,7 +4,9 @@
     android:versionCode="45"
     android:versionName="4.5.6" >
 
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="21"/>
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="21" />
 
     <!-- Push service 运行需要的权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,7 +22,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
     <application
         android:name="com.zboss.suiyuan.PushApplication"
@@ -37,21 +39,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity
-            android:name="com.zboss.suiyuan.SinglePic" >
+        <activity android:name="com.zboss.suiyuan.SinglePic" >
         </activity>
-        
-        <activity
-            android:name="com.zboss.suiyuan.ChatSinglePic" >
+        <activity android:name="com.zboss.suiyuan.ChatSinglePic" >
         </activity>
-        
-        <activity
-            android:name="com.zboss.suiyuan.SingleNews" >
+        <activity android:name="com.zboss.suiyuan.SingleNews" >
         </activity>
-        
-        <activity
-            android:name="com.zboss.suiyuan.SelectPicActivity" >
+        <activity android:name="com.zboss.suiyuan.SelectPicActivity" >
         </activity>
 
         <!-- push应用定义消息receiver声明 -->
@@ -66,7 +60,13 @@
             </intent-filter>
         </receiver>
 
-        <!-- push必须的receviver和service声明 -->
+        <!-- 4.6版本新增的Activity声明，提升Push后台存活率 -->
+        <activity
+            android:name="com.baidu.android.pushservice.PushKeepAlive"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- push service start -->
+        <!-- 用于接收系统消息以保证PushService正常运行 -->
         <receiver
             android:name="com.baidu.android.pushservice.PushServiceReceiver"
             android:process=":bdservice_v1" >
@@ -82,6 +82,7 @@
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
+        <!-- Push服务接收客户端发送的各种请求 -->
         <receiver
             android:name="com.baidu.android.pushservice.RegistrationReceiver"
             android:process=":bdservice_v1" >
@@ -104,6 +105,7 @@
                 <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE" />
             </intent-filter>
         </service>
+        <!-- 4.4版本新增的CommandService声明，提升小米和魅族手机上的实际推送到达率 -->
         <service
             android:name="com.baidu.android.pushservice.CommandService"
             android:exported="true" />

@@ -18,26 +18,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class ChatSinglePic extends Activity {
 
-    private ZoomImageView image;
+    private ImageView image;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.chatsinglepic);
-        image = (ZoomImageView) findViewById(R.id.chatsingleimg);
+        image = (ImageView) findViewById(R.id.chatsingleimg);
 
         if (ChatConstant.bitMap != null) {
-            image.setImage(ChatConstant.bitMap);
-        }
-
-        double num = Math.random();
-        if (num < 0.8) {
-            Toast.makeText(ChatSinglePic.this, "提示：用两个手指可以实现图片放大缩小", Toast.LENGTH_SHORT).show();
+            image.setImageBitmap(ChatConstant.bitMap);
         }
 
         image.setOnLongClickListener(new View.OnLongClickListener() {
@@ -67,7 +63,7 @@ public class ChatSinglePic extends Activity {
             try {
                 String sdcard = Environment.getExternalStorageDirectory().toString();
 
-                File file = new File(sdcard + "/Download");
+                File file = new File(sdcard + "/suiyuan");
                 if (!file.exists()) {
                     file.mkdirs();
                 }
