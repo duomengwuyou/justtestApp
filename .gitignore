@@ -1,2 +1,4 @@
 bin/
 .DS_Store
+res/.DS_Store
+res/drawable/.DS_Store
