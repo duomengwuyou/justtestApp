@@ -29,8 +29,6 @@ import com.zboss.suiyuan.chat.ConnectServer;
 import com.zboss.suiyuan.enums.TitleEnum;
 import com.zboss.suiyuan.utils.GeneralUtil;
 import com.zboss.suiyuan.utils.SendMsgAsyncTask;
-import com.zboss.suiyuan.voice.AudioRecordButton;
-import com.zboss.suiyuan.voice.AudioRecordButton.AudioFinishRecorderListener;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -141,7 +139,11 @@ public class MainTab01 extends Fragment {
             // 用于接收录音信息
             voicePath = data.getStringExtra(VoiceActivity.KEY_VOICE_PATH);
             voiceSecondes = data.getFloatExtra(VoiceActivity.KEY_VOICE_SECONDS, 1f);
-            sendVoice(voicePath, voiceSecondes);
+            if(voiceSecondes > 180) {
+                Toast.makeText(activity, "语音太长，无法发送！", Toast.LENGTH_SHORT).show();
+            } else {
+                sendVoice(voicePath, voiceSecondes);
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -293,6 +295,7 @@ public class MainTab01 extends Fragment {
             @Override
             public void onClick(View v) {
                 // 如果尚未建立连接 不能发送对话
+                beforeSendMsg();
                 if (!PushApplication.buildConOrNot) {
                     Toast.makeText(getActivity(), "建立连接之后才可以发送语音", Toast.LENGTH_SHORT).show();
                     return;
@@ -331,7 +334,9 @@ public class MainTab01 extends Fragment {
             public void onClick(View v) {
                 // 判断发送内容框是否为空
                 String msg = mMsgInput.getText().toString();
+
                 // 如果尚未建立连接 不能发送对话
+                beforeSendMsg();
                 if (!PushApplication.buildConOrNot) {
                     Toast.makeText(getActivity(), "建立连接之后才可以发送对话", Toast.LENGTH_SHORT).show();
                     return;
@@ -502,6 +507,18 @@ public class MainTab01 extends Fragment {
                     }
                 });
         requestQueue.add(jsonObjectRequest);
+    }
+
+    /**
+     * 发送消息前验证
+     */
+    public static void beforeSendMsg() {
+
+        // 如果目前没有连接对象
+        if (PushApplication.YOUR_CHANNEL_ID == null) {
+            PushApplication.buildConOrNot = false;
+            buildCon.setText("连接");
+        }
     }
 
     class Recorder {

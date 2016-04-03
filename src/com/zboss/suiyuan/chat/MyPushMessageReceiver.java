@@ -92,9 +92,8 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         Log.d(TAG, responseString);
 
         if (errorCode == 0) {
-            // 绑定成功 设置自己的channelId和对方channelId为自己
             PushApplication.MY_CHANNEL_ID = channelId;
-            PushApplication.YOUR_CHANNEL_ID = channelId;
+            PushApplication.YOUR_CHANNEL_ID = null;
             PushApplication.APP_ID = appid;
             PushApplication.USER_ID = userId;
         } else {
@@ -193,26 +192,13 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         String messageString = "透传消息 message=\"" + message + "\" customContentString=" + customContentString;
         Log.d(TAG, messageString);
 
-        // 自定义内容获取方式，mykey和myvalue对应透传消息推送时自定义内容中设置的键和值
-        // if (!TextUtils.isEmpty(customContentString)) {
-        // JSONObject customJson = null;
-        // try {
-        // customJson = new JSONObject(customContentString);
-        // String myvalue = null;
-        // if (!customJson.isNull("mykey")) {
-        // myvalue = customJson.getString("mykey");
-        // }
-        // } catch (JSONException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-        // }
-
         // 解析获取对话内容
         String chatContent = "等会哈，有点忙";
         String title = "none";
         // 默认为收到信息
         int isComing = 2;
+        boolean showOrNot = true;
+        boolean systemMsgOrNot = false;
         if (!TextUtils.isEmpty(message)) {
             JSONObject customJson = null;
             try {
@@ -229,7 +215,8 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                         PushApplication.buildConOrNot = true;
                         chatContent = "恭喜，已经联系上有缘人，你们可以聊天了！";
                         MainTab01.buildCon.setText("断开");
-                        isComing = 3;
+                        isComing = 1;
+                        systemMsgOrNot = true;
                     } else if (title.equals(TitleEnum.CLOSE_CONNECTION.getStatus())) {
                         // 避免启动时接收延迟消息
                         if (PushApplication.YOUR_CHANNEL_ID == null) {
@@ -240,14 +227,21 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                         }
                         PushApplication.buildConOrNot = false;
                         MainTab01.buildCon.setText("连接");
-                        isComing = 3;
+                        isComing = 1;
+                        systemMsgOrNot = true;
                     } else if (title.equals(TitleEnum.PIC_SUCCESS.getStatus())) {
                         downloadImage(chatContent);
                         chatContent = "接收到对方图片，加载中......";
-                        isComing = 3;
+                        isComing = 1;
+                        systemMsgOrNot = true;
                     } else if (title.equals(TitleEnum.VOICE_SUCCESS.getStatus())) {
                         downloadVoice(chatContent);
-                        isComing = 5;
+                        showOrNot = false;
+                    } else {
+                        // 其他情况
+                        if (PushApplication.YOUR_CHANNEL_ID == null) {
+                            showOrNot = false;
+                        } 
                     }
                 }
             } catch (JSONException e) {
@@ -256,13 +250,18 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         }
 
         // 发送时间
-        sendTime();
+//        if(isComing == 2 && showOrNot) {
+//            sendTime();
+//        }
 
         // Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-        if (isComing != 5) {
+        if (showOrNot) {
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setIsComing(isComing);
-            if (isComing == 3) {
+            if(systemMsgOrNot) {
+                chatMessage.setSystemMsgOrNot(true);
+            }
+            if (systemMsgOrNot) {
                 chatMessage.setDate(new Date());
                 chatMessage.setDateStr(chatContent);
             } else {
@@ -278,17 +277,17 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         }
     }
 
-    private void sendTime() {
-        if (lastTime == null || (System.currentTimeMillis() - lastTime > timeInternal)) {
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setIsComing(3);
-            chatMessage.setDate(new Date());
-            MainTab01.mDatas.add(chatMessage);
-            MainTab01.mAdapter.notifyDataSetChanged();
-            MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
-            lastTime = System.currentTimeMillis();
-        }
-    }
+//    private void sendTime() {
+//        if (lastTime == null || (System.currentTimeMillis() - lastTime > timeInternal)) {
+//            ChatMessage chatMessage = new ChatMessage();
+//            chatMessage.setIsComing(3);
+//            chatMessage.setDate(new Date());
+//            MainTab01.mDatas.add(chatMessage);
+//            MainTab01.mAdapter.notifyDataSetChanged();
+//            MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
+//            lastTime = System.currentTimeMillis();
+//        }
+//    }
 
     private void showRedPoint() {
         // 红点提示

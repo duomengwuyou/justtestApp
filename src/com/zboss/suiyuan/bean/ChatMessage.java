@@ -24,6 +24,8 @@ public class ChatMessage {
 
     private String imagePath; // 图片路径
 
+    private boolean systemMsgOrNot = false; // 系统消息
+
     public void setDateStr(String dateStr) {
         this.dateStr = dateStr;
     }
@@ -139,6 +141,14 @@ public class ChatMessage {
 
     public void setVoicePath(String voicePath) {
         this.voicePath = voicePath;
+    }
+
+    public boolean isSystemMsgOrNot() {
+        return systemMsgOrNot;
+    }
+
+    public void setSystemMsgOrNot(boolean systemMsgOrNot) {
+        this.systemMsgOrNot = systemMsgOrNot;
     }
 
 }

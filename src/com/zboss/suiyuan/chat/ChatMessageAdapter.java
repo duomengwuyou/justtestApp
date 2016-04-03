@@ -82,22 +82,14 @@ public class ChatMessageAdapter extends BaseAdapter {
                 convertView.setTag(viewHolder);
                 // 发出消息
             } else if (chatMessage.getIsComing() == 1) {
-                convertView = mInflater.inflate(R.layout.main_chat_send_msg, null);
+                convertView = mInflater.inflate(R.layout.main_chat_send_msg, parent, false);
                 viewHolder.createDate = (TextView) convertView.findViewById(R.id.chat_send_createDate);
                 viewHolder.content = (TextView) convertView.findViewById(R.id.chat_send_content);
                 viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_send_name);
                 viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_send_image);
                 convertView.setTag(viewHolder);
 
-            } else {
-                // 系统消息
-                convertView = mInflater.inflate(R.layout.main_chat_send_msg, null);
-                viewHolder.content = (TextView) convertView.findViewById(R.id.chat_send_content);
-                viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_send_name);
-                viewHolder.createDate = (TextView) convertView.findViewById(R.id.chat_send_createDate);
-                viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_send_image);
-                convertView.setTag(viewHolder);
-            }
+            } 
 
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -164,7 +156,17 @@ public class ChatMessageAdapter extends BaseAdapter {
                     }
                 });
 
+            } else if(chatMessage.isSystemMsgOrNot()) {
+                // 系统消息
+                viewHolder.createDate.setVisibility(View.VISIBLE);
+                viewHolder.createDate.setText(chatMessage.getDateStr());
+                viewHolder.content.setVisibility(View.GONE);
+                viewHolder.chatImage.setVisibility(View.GONE);
+                viewHolder.nickname.setVisibility(View.GONE);
+                convertView.findViewById(R.id.chat_send_icon).setVisibility(View.GONE);
+                
             } else {
+                // 一般消息
                 viewHolder.chatImage.setVisibility(View.GONE);
                 viewHolder.content.setVisibility(View.VISIBLE);
                 viewHolder.nickname.setVisibility(View.VISIBLE);
@@ -176,16 +178,8 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.content.setText(chatMessage.getMessage());
                 viewHolder.nickname.setText(chatMessage.getNickname());
             }
-        } else if (chatMessage.getIsComing() == 3) {
-            // 系统消息
-            viewHolder.createDate.setText(chatMessage.getDateStr());
-
-            viewHolder.content.setVisibility(View.GONE);
-            viewHolder.chatImage.setVisibility(View.GONE);
-            viewHolder.nickname.setVisibility(View.GONE);
-            convertView.findViewById(R.id.chat_send_icon).setVisibility(View.GONE);
-        } 
-
+        }
+        
         return convertView;
     }
 
