@@ -29,6 +29,8 @@ import com.zboss.suiyuan.chat.ConnectServer;
 import com.zboss.suiyuan.enums.TitleEnum;
 import com.zboss.suiyuan.utils.GeneralUtil;
 import com.zboss.suiyuan.utils.SendMsgAsyncTask;
+import com.zboss.suiyuan.voice.AudioRecordButton;
+import com.zboss.suiyuan.voice.AudioRecordButton.AudioFinishRecorderListener;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -54,6 +56,9 @@ public class MainTab01 extends Fragment {
     private EditText mMsgInput;
     private Button mMsgSend;
     public static Button buildCon;
+    public Button voiceBtn;
+
+    public static final String SPLIT_TOKEN = "_#_#_";
 
     public static ListView mChatMessagesListView;
     public static List<ChatMessage> mDatas = new ArrayList<ChatMessage>();
@@ -71,7 +76,14 @@ public class MainTab01 extends Fragment {
      */
     public static final int TO_SELECT_PHOTO = 3;
 
+    /**
+     * 录音结束
+     */
+    public static final int TO_SEND_VOICE = 4;
+
     private String picPath = null;
+    private String voicePath = null;
+    private float voiceSecondes = 0f;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,7 +118,8 @@ public class MainTab01 extends Fragment {
         mChatMessagesListView = (ListView) rootView.findViewById(R.id.id_chat_listView);
         mMsgInput = (EditText) rootView.findViewById(R.id.id_chat_msg);
         mMsgSend = (Button) rootView.findViewById(R.id.id_chat_send);
-        buildCon = (Button) rootView.findViewById(R.id.build_chat_con);
+        buildCon = MainActivity.enterChat;
+        voiceBtn = (Button) rootView.findViewById(R.id.id_chat_voice);
 
         if (PushApplication.buildConOrNot) {
             buildCon.setText("断开");
@@ -120,12 +133,41 @@ public class MainTab01 extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 用于接收图片返回结果
         if (resultCode == Activity.RESULT_OK && requestCode == TO_SELECT_PHOTO) {
             picPath = data.getStringExtra(SelectPicActivity.KEY_PHOTO_PATH);
-            // Bitmap bm = BitmapFactory.decodeFile(picPath);
             sendPic(picPath);
+        } else if (resultCode == Activity.RESULT_OK && requestCode == TO_SEND_VOICE) {
+            // 用于接收录音信息
+            voicePath = data.getStringExtra(VoiceActivity.KEY_VOICE_PATH);
+            voiceSecondes = data.getFloatExtra(VoiceActivity.KEY_VOICE_SECONDS, 1f);
+            sendVoice(voicePath, voiceSecondes);
         }
+
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // 发送语音给对方
+    private void sendVoice(String voicePath, float voiceSeconds) {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setIsComing(1);
+        chatMessage.setDate(new Date());
+        chatMessage.setNickname("寻缘人");
+        chatMessage.setSeconds(voiceSeconds);
+        chatMessage.setVoicePath(voicePath);
+
+        // 构建消息
+        String voiceSecondsStr = String.valueOf(voiceSeconds);
+        String message = "语音消息: " + voiceSecondsStr.substring(0, 4) + "秒(点击播放)";
+        chatMessage.setMessage(message);
+
+        mDatas.add(chatMessage);
+        mAdapter.notifyDataSetChanged();
+        mChatMessagesListView.setSelection(mDatas.size() - 1);
+
+        // 上传声音到服务器
+        uploadVoiceFileToOSS(voiceSeconds, voicePath);
+
     }
 
     // 发送图片给对方
@@ -142,6 +184,36 @@ public class MainTab01 extends Fragment {
 
         // 上传图片到服务器
         uploadFileToOSS(picPath);
+    }
+
+    // 上传语音到服务器
+    private void uploadVoiceFileToOSS(float voiceSeconds, String voicePath) {
+        final String randomKey =
+                voiceSeconds + SPLIT_TOKEN + PushApplication.MY_CHANNEL_ID + "_" + GeneralUtil.getRandomString(10);
+        OSS oss = new OSSClient(getActivity(), PushApplication.endpoint, PushApplication.credentialProvider);
+        PutObjectRequest put = new PutObjectRequest(PushApplication.bucketName, randomKey, voicePath);
+
+        OSSAsyncTask task = oss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                sendNoticeMessage(TitleEnum.VOICE_SUCCESS, randomKey);
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientExcepion,
+                    ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                    sendNoticeMessage(TitleEnum.VOICE_FAIL, randomKey);
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    sendNoticeMessage(TitleEnum.VOICE_FAIL, randomKey);
+                }
+            }
+        });
     }
 
     // 上传图片到服务器
@@ -189,10 +261,24 @@ public class MainTab01 extends Fragment {
             // 界面上失败
             Toast.makeText(activity, "图片发送成功！", Toast.LENGTH_SHORT).show();
             Looper.loop();
+        } else if (msg == TitleEnum.VOICE_SUCCESS) {
+            // 构建新的会话
+            Message message = new Message(randomKey, PushApplication.YOUR_CHANNEL_ID);
+            message.setTitle(msg.getStatus());
+
+            // 发送消息
+            Looper.prepare();
+            SendMsgAsyncTask newTask = new SendMsgAsyncTask(mGson.toJson(message), PushApplication.YOUR_CHANNEL_ID);
+            newTask.send();
+
+            // 界面上失败
+            Toast.makeText(activity, "语音发送成功！", Toast.LENGTH_SHORT).show();
+            Looper.loop();
+
         } else {
             // 界面上失败
             Looper.prepare();
-            Toast.makeText(activity, "抱歉，图片发送失败，请重新发送！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "抱歉，内容发送失败，请重新发送！", Toast.LENGTH_SHORT).show();
             Looper.loop();
         }
 
@@ -202,6 +288,22 @@ public class MainTab01 extends Fragment {
      * 初始化视图
      */
     private void initEvent() {
+
+        voiceBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 如果尚未建立连接 不能发送对话
+                if (!PushApplication.buildConOrNot) {
+                    Toast.makeText(getActivity(), "建立连接之后才可以发送语音", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // 发送语音
+                Intent intent = new Intent(activity, VoiceActivity.class);
+                startActivityForResult(intent, TO_SEND_VOICE);
+            }
+        });
+
         mMsgInput.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -400,6 +502,34 @@ public class MainTab01 extends Fragment {
                     }
                 });
         requestQueue.add(jsonObjectRequest);
+    }
+
+    class Recorder {
+        float time;
+        String filePathString;
+
+        public Recorder(float time, String filePathString) {
+            super();
+            this.time = time;
+            this.filePathString = filePathString;
+        }
+
+        public float getTime() {
+            return time;
+        }
+
+        public void setTime(float time) {
+            this.time = time;
+        }
+
+        public String getFilePathString() {
+            return filePathString;
+        }
+
+        public void setFilePathString(String filePathString) {
+            this.filePathString = filePathString;
+        }
+
     }
 
 }

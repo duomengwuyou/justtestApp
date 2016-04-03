@@ -13,11 +13,14 @@ import android.graphics.Bitmap;
 public class ChatMessage {
 
     private String message;
-    private int isComing; // 1 发出 2 收到 3系统
+    private int isComing; // 1 发出 2 收到 3系统 4 语音
     private Date date;
     private String userId;
     private int icon;
     private Bitmap bitmap; // 图片文件
+
+    private float seconds; // 录音长度
+    private String voicePath; // 录音路径
 
     private String imagePath; // 图片路径
 
@@ -121,4 +124,21 @@ public class ChatMessage {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
+
+    public float getSeconds() {
+        return seconds;
+    }
+
+    public void setSeconds(float seconds) {
+        this.seconds = seconds;
+    }
+
+    public String getVoicePath() {
+        return voicePath;
+    }
+
+    public void setVoicePath(String voicePath) {
+        this.voicePath = voicePath;
+    }
+
 }

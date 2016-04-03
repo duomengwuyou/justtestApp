@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name="com.zboss.suiyuan.PushApplication"
@@ -49,6 +50,8 @@
         <activity android:name="com.zboss.suiyuan.SingleNews" >
         </activity>
         <activity android:name="com.zboss.suiyuan.SelectPicActivity" >
+        </activity>
+        <activity android:name="com.zboss.suiyuan.VoiceActivity" >
         </activity>
 
         <!-- push应用定义消息receiver声明 -->

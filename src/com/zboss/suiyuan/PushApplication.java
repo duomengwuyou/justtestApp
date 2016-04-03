@@ -78,6 +78,9 @@ public class PushApplication extends Application {
     public static String accessSecret = "WCFB4JpKKEqyHUTqWtKKNQCa0ryhv7";
     public static String bucketName = "zbosssuiyuan";
     
+    // 是否已显示帮助
+    public static boolean showHelpOrNot = false;
+    
     // 凭证提供
     public static OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(accessKey, accessSecret);
 

@@ -5,11 +5,13 @@ import java.util.List;
 import com.zboss.suiyuan.ChatSinglePic;
 import com.zboss.suiyuan.R;
 import com.zboss.suiyuan.bean.ChatMessage;
+import com.zboss.suiyuan.voice.MediaManager;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,8 +88,9 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_send_name);
                 viewHolder.chatImage = (ImageView) convertView.findViewById(R.id.chat_send_image);
                 convertView.setTag(viewHolder);
-                // 系统消息
+
             } else {
+                // 系统消息
                 convertView = mInflater.inflate(R.layout.main_chat_send_msg, null);
                 viewHolder.content = (TextView) convertView.findViewById(R.id.chat_send_content);
                 viewHolder.nickname = (TextView) convertView.findViewById(R.id.chat_send_name);
@@ -123,7 +126,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         });
 
         // 非系统消息
-        if (chatMessage.getIsComing() != 3) {
+        if (chatMessage.getIsComing() == 1 || chatMessage.getIsComing() == 2) {
             // 判断当前是否是图片类型
             if (chatMessage.getImagePath() != null || chatMessage.getBitmap() != null) {
                 viewHolder.chatImage.setImageBitmap(bm);
@@ -135,6 +138,32 @@ public class ChatMessageAdapter extends BaseAdapter {
                     convertView.findViewById(R.id.chat_send_icon).setVisibility(View.VISIBLE);
                 }
                 viewHolder.nickname.setText(chatMessage.getNickname());
+            } else if (chatMessage.getVoicePath() != null) {
+                // 如果是语音消息
+                viewHolder.chatImage.setVisibility(View.GONE);
+                viewHolder.content.setVisibility(View.VISIBLE);
+                viewHolder.nickname.setVisibility(View.VISIBLE);
+                viewHolder.createDate.setVisibility(View.GONE);
+                if (convertView.findViewById(R.id.chat_send_icon) != null) {
+                    convertView.findViewById(R.id.chat_send_icon).setVisibility(View.VISIBLE);
+                }
+
+                viewHolder.content.setText(chatMessage.getMessage());
+                viewHolder.nickname.setText(chatMessage.getNickname());
+
+                // 建立事件监听
+                viewHolder.content.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // 播放音频
+                        MediaManager.playSound(chatMessage.getVoicePath(), new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                            }
+                        });
+                    }
+                });
+
             } else {
                 viewHolder.chatImage.setVisibility(View.GONE);
                 viewHolder.content.setVisibility(View.VISIBLE);
@@ -147,14 +176,15 @@ public class ChatMessageAdapter extends BaseAdapter {
                 viewHolder.content.setText(chatMessage.getMessage());
                 viewHolder.nickname.setText(chatMessage.getNickname());
             }
-        } else {
+        } else if (chatMessage.getIsComing() == 3) {
+            // 系统消息
             viewHolder.createDate.setText(chatMessage.getDateStr());
 
             viewHolder.content.setVisibility(View.GONE);
             viewHolder.chatImage.setVisibility(View.GONE);
             viewHolder.nickname.setVisibility(View.GONE);
             convertView.findViewById(R.id.chat_send_icon).setVisibility(View.GONE);
-        }
+        } 
 
         return convertView;
     }

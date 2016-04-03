@@ -22,6 +22,7 @@ import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -62,9 +63,10 @@ public class MainActivity extends FragmentActivity {
     private static ImageView mTabLine;
 
     // 设置图表
-    private static ImageView setImage;
-    private static ImageView newsSet;
-    private static ImageView liaotianset;
+    public static ImageView setImage;
+    public static ImageView newsSet;
+    public static ImageView liaotianset;
+    public static Button enterChat;
 
     public static int currentIndex;
     private static int screenWidth;
@@ -84,9 +86,6 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // 消息推送
-        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, PushApplication.API_KEY);
-
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
         
 
@@ -129,6 +128,11 @@ public class MainActivity extends FragmentActivity {
 
         // 默认选择第一个标签
         mViewPager.setCurrentItem(0);
+        
+        // 显示帮助提示
+        if(!PushApplication.showHelpOrNot) {
+            showHelper(this);
+        }
     }
     
     
@@ -145,7 +149,8 @@ public class MainActivity extends FragmentActivity {
                     mLiaotian.setTextColor(getResources().getColor(R.color.green));
 
                     // 隐藏图标
-                    liaotianset.setVisibility(View.VISIBLE);
+                    enterChat.setVisibility(View.VISIBLE);
+                    liaotianset.setVisibility(View.GONE);
                     setImage.setVisibility(View.GONE);
                     newsSet.setVisibility(View.GONE);
                     break;
@@ -157,7 +162,8 @@ public class MainActivity extends FragmentActivity {
                     // mTabFaxian.addView(mBadgeViewforFaxian);
 
                     // 隐藏图标
-                    liaotianset.setVisibility(View.GONE);
+                    enterChat.setVisibility(View.GONE);
+                    liaotianset.setVisibility(View.VISIBLE);
                     setImage.setVisibility(View.VISIBLE);
                     newsSet.setVisibility(View.GONE);
                     break;
@@ -167,6 +173,7 @@ public class MainActivity extends FragmentActivity {
                     mBadgeViewforTongxunlu.setBadgeCount(0);
 
                     // 隐藏图标
+                    enterChat.setVisibility(View.GONE);
                     liaotianset.setVisibility(View.GONE);
                     setImage.setVisibility(View.GONE);
                     newsSet.setVisibility(View.VISIBLE);
@@ -429,6 +436,7 @@ public class MainActivity extends FragmentActivity {
         setImage = (ImageView) findViewById(R.id.set);
         newsSet = (ImageView) findViewById(R.id.newsset);
         liaotianset = (ImageView) findViewById(R.id.liaotianset);
+        enterChat = (Button) findViewById(R.id.build_chat_con);
 
         // 新建三个碎片
         MainTab01 tab01 = new MainTab01();
@@ -449,6 +457,27 @@ public class MainActivity extends FragmentActivity {
             dialog_Exit(MainActivity.this);
         }
         return false;
+    }
+    
+    public void showHelper(Context context) {
+        AlertDialog.Builder builder = new Builder(context);
+        builder.setMessage("1、通过右上角的『连接』按钮来建立会话或者断开会话。\n 2、左下角『语音』按钮发送语音信息。\n 3、右下角按钮用于控制发送文字和图片。\n 欢迎使用随缘吧！");
+        builder.setTitle("温馨提示：如何使用");
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                PushApplication.showHelpOrNot = true;
+            }
+        });
+
+        builder.setNegativeButton("下次提醒", new android.content.DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
     }
 
     public void dialog_Exit(Context context) {

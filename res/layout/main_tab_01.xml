@@ -27,26 +27,25 @@
             android:onClick="sendMessage"
             android:text="图片" />
         
+        
         <Button
-            android:id="@+id/build_chat_con"
+            android:id="@+id/id_chat_voice"
             android:layout_width="56dp"
             android:layout_height="40dp"
             android:textSize="15dip"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
+            android:layout_alignParentLeft="true"
             android:background="@drawable/chat_send_btn"
             android:onClick="sendMessage"
-            android:text="连接" />
+            android:text="语音" />
         
-        
-
         <EditText
             android:id="@+id/id_chat_msg"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/build_chat_con"
+            android:layout_toRightOf="@id/id_chat_voice"
             android:layout_toLeftOf="@id/id_chat_send"
             android:background="@drawable/login_edit_normal"
             android:textSize="16dip" />
@@ -64,7 +63,5 @@
         android:dividerHeight="5dp"
         android:scrollbarStyle="outsideOverlay" >
     </ListView>
-
-    
 
 </RelativeLayout>

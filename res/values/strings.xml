@@ -15,5 +15,11 @@
     <string name="head_pull_time">上次刷新时间: 2014-10-10 12:56:12</string>
     
     <string name="net_error_tip">网络错误了呢！</string>
+    
+    <string  name="normal">按住 说话</string>
+    <string  name="recording">松开 结束</string>
+    <string  name="want_to_cancle">松开手指，取消发送</string>
+    <string name="shouzhishanghua">手指上滑，取消发送</string>
+    <string name="tooshort">录音时间过短</string>
 
 </resources>

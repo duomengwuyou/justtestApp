@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.zboss.suiyuan.VoiceActivity" >
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"        
+        >
+
+        <!-- minHeight消除主界面上的一些间距 -->
+
+        <com.zboss.suiyuan.voice.AudioRecordButton
+            android:id="@+id/recordButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/button_recordnormal"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/normal"
+            android:textColor="#727272" >
+        </com.zboss.suiyuan.voice.AudioRecordButton>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ccc" />
+    </FrameLayout>
+
+</RelativeLayout>

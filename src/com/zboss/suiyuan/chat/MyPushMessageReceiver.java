@@ -1,6 +1,9 @@
 package com.zboss.suiyuan.chat;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -16,9 +19,11 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
@@ -89,12 +94,16 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         if (errorCode == 0) {
             // 绑定成功 设置自己的channelId和对方channelId为自己
             PushApplication.MY_CHANNEL_ID = channelId;
+            PushApplication.YOUR_CHANNEL_ID = channelId;
+            PushApplication.APP_ID = appid;
+            PushApplication.USER_ID = userId;
+        } else {
+            PushApplication.MY_CHANNEL_ID = null;
             PushApplication.YOUR_CHANNEL_ID = null;
             PushApplication.APP_ID = appid;
             PushApplication.USER_ID = userId;
-
-            GetNetIp();
         }
+        GetNetIp();
     }
 
     public static void GetNetIp() {
@@ -222,41 +231,51 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                         MainTab01.buildCon.setText("断开");
                         isComing = 3;
                     } else if (title.equals(TitleEnum.CLOSE_CONNECTION.getStatus())) {
-                        PushApplication.YOUR_CHANNEL_ID = null;
+                        // 避免启动时接收延迟消息
+                        if (PushApplication.YOUR_CHANNEL_ID == null) {
+                            chatContent = "欢迎使用随缘吧，祝早日找到有缘人！";
+                        } else {
+                            PushApplication.YOUR_CHANNEL_ID = null;
+                            chatContent = "抱歉，对方已断开，你们缘分已尽，请寻找其他有缘人！";
+                        }
                         PushApplication.buildConOrNot = false;
-                        chatContent = "抱歉，对方已断开，你们缘分已尽，请寻找其他有缘人！";
                         MainTab01.buildCon.setText("连接");
                         isComing = 3;
                     } else if (title.equals(TitleEnum.PIC_SUCCESS.getStatus())) {
                         downloadImage(chatContent);
                         chatContent = "接收到对方图片，加载中......";
                         isComing = 3;
+                    } else if (title.equals(TitleEnum.VOICE_SUCCESS.getStatus())) {
+                        downloadVoice(chatContent);
+                        isComing = 5;
                     }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        
+
         // 发送时间
         sendTime();
 
         // Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setIsComing(isComing);
-        if (isComing == 3) {
-            chatMessage.setDate(new Date());
-            chatMessage.setDateStr(chatContent);
-        } else {
-            chatMessage.setDate(new Date());
+        if (isComing != 5) {
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setIsComing(isComing);
+            if (isComing == 3) {
+                chatMessage.setDate(new Date());
+                chatMessage.setDateStr(chatContent);
+            } else {
+                chatMessage.setDate(new Date());
+            }
+            chatMessage.setMessage(chatContent);
+            chatMessage.setNickname("有缘人");
+            chatMessage.setReaded(true);
+            MainTab01.mDatas.add(chatMessage);
+            MainTab01.mAdapter.notifyDataSetChanged();
+            MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
+            showRedPoint();
         }
-        chatMessage.setMessage(chatContent);
-        chatMessage.setNickname("有缘人");
-        chatMessage.setReaded(true);
-        MainTab01.mDatas.add(chatMessage);
-        MainTab01.mAdapter.notifyDataSetChanged();
-        MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
-        showRedPoint();
     }
 
     private void sendTime() {
@@ -279,6 +298,97 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
             MainActivity.mBadgeViewforLiaotian.setBadgeCount(nowCount + 1);
             MainActivity.mTabLiaotian.addView(MainActivity.mBadgeViewforLiaotian);
         }
+    }
+
+    // 异步下载图片
+    private void downloadVoice(final String voicePath) {
+        String[] tokens = voicePath.split(MainTab01.SPLIT_TOKEN);
+        if (tokens.length != 2) {
+            tokens[0] = "1";
+            tokens[1] = "unknown";
+        }
+        final String seconds = tokens[0];
+
+        GetObjectRequest get = new GetObjectRequest(PushApplication.bucketName, voicePath);
+        OSS oss = new OSSClient(MainTab01.activity, PushApplication.endpoint, PushApplication.credentialProvider);
+
+        OSSAsyncTask task = oss.asyncGetObject(get, new OSSCompletedCallback<GetObjectRequest, GetObjectResult>() {
+            @Override
+            public void onSuccess(GetObjectRequest request, GetObjectResult result) {
+                try {
+                    // 请求成功
+                    InputStream inputStream = result.getObjectContent();
+                    String sdcard = Environment.getExternalStorageDirectory().toString();
+
+                    File file = new File(sdcard + "/suiyuan");
+                    if (!file.exists()) {
+                        file.mkdirs();
+                    }
+
+                    File voiceFile = new File(file.getAbsolutePath(), new Date().getTime() + ".amr");
+                    FileOutputStream outStream = null;
+                    outStream = new FileOutputStream(voiceFile);
+
+                    // 将输入流is写入文件输出流fos中
+                    int ch = 0;
+                    try {
+                        while ((ch = inputStream.read()) != -1) {
+                            outStream.write(ch);
+                        }
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    } finally {
+                        // 关闭输入流等（略）
+                        outStream.flush();
+                        inputStream.close();
+                        outStream.close();
+                    }
+
+                    // 接收消息
+                    final ChatMessage chatMessage = new ChatMessage();
+                    chatMessage.setIsComing(2);
+                    chatMessage.setDate(new Date());
+                    chatMessage.setNickname("有缘人");
+                    chatMessage.setSeconds(Float.parseFloat(seconds));
+                    chatMessage.setVoicePath(voiceFile.getAbsolutePath());
+                    
+                    // 构建消息
+                    String voiceSecondsStr = String.valueOf(seconds);
+                    String message = "语音消息: " + voiceSecondsStr.substring(0,4) + "秒(点击播放)";
+                    chatMessage.setMessage(message);
+
+                    new Handler(MainTab01.activity.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainTab01.mDatas.add(chatMessage);
+                            MainTab01.mAdapter.notifyDataSetChanged();
+                            MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
+                            showRedPoint();
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e.getLocalizedMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(GetObjectRequest request, ClientException clientExcepion,
+                    ServiceException serviceException) {
+                // 请求异常
+                if (clientExcepion != null) {
+                    // 本地异常如网络异常等
+                    clientExcepion.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+            }
+
+        });
     }
 
     // 异步下载图片
