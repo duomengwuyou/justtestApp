@@ -16,11 +16,19 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -36,6 +44,8 @@ import com.baidu.android.pushservice.PushMessageReceiver;
 import com.zboss.suiyuan.MainActivity;
 import com.zboss.suiyuan.MainTab01;
 import com.zboss.suiyuan.PushApplication;
+import com.zboss.suiyuan.R;
+import com.zboss.suiyuan.SplashActivity;
 import com.zboss.suiyuan.bean.ChatMessage;
 import com.zboss.suiyuan.enums.TitleEnum;
 
@@ -241,7 +251,7 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                         // 其他情况
                         if (PushApplication.YOUR_CHANNEL_ID == null) {
                             showOrNot = false;
-                        } 
+                        }
                     }
                 }
             } catch (JSONException e) {
@@ -250,15 +260,15 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
         }
 
         // 发送时间
-//        if(isComing == 2 && showOrNot) {
-//            sendTime();
-//        }
+        // if(isComing == 2 && showOrNot) {
+        // sendTime();
+        // }
 
         // Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
         if (showOrNot) {
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setIsComing(isComing);
-            if(systemMsgOrNot) {
+            if (systemMsgOrNot) {
                 chatMessage.setSystemMsgOrNot(true);
             }
             if (systemMsgOrNot) {
@@ -274,20 +284,71 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
             MainTab01.mAdapter.notifyDataSetChanged();
             MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
             showRedPoint();
+            // 如果后台运行,发送通知栏
+            if (isBackground(context)) {
+                addNotificaction(context, "新消息", chatContent);
+            }
         }
     }
 
-//    private void sendTime() {
-//        if (lastTime == null || (System.currentTimeMillis() - lastTime > timeInternal)) {
-//            ChatMessage chatMessage = new ChatMessage();
-//            chatMessage.setIsComing(3);
-//            chatMessage.setDate(new Date());
-//            MainTab01.mDatas.add(chatMessage);
-//            MainTab01.mAdapter.notifyDataSetChanged();
-//            MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
-//            lastTime = System.currentTimeMillis();
-//        }
-//    }
+    // private void sendTime() {
+    // if (lastTime == null || (System.currentTimeMillis() - lastTime > timeInternal)) {
+    // ChatMessage chatMessage = new ChatMessage();
+    // chatMessage.setIsComing(3);
+    // chatMessage.setDate(new Date());
+    // MainTab01.mDatas.add(chatMessage);
+    // MainTab01.mAdapter.notifyDataSetChanged();
+    // MainTab01.mChatMessagesListView.setSelection(MainTab01.mDatas.size() - 1);
+    // lastTime = System.currentTimeMillis();
+    // }
+    // }
+
+    private void addNotificaction(Context context, String title, String message) {
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setContentTitle(title).setContentText(message)
+                .setContentIntent(getDefalutIntent(Notification.FLAG_AUTO_CANCEL, context)) // 设置通知栏点击意图
+                .setTicker("来自随缘吧的缘分") // 通知首次出现在通知栏，带上升动画效果的
+                .setWhen(System.currentTimeMillis())// 通知产生的时间，会在通知信息里显示，一般是系统获取到的时间
+                .setPriority(Notification.PRIORITY_DEFAULT) // 设置该通知优先级
+                .setAutoCancel(true)// 设置这个标志当用户单击面板就可以让通知将自动取消
+                .setOngoing(false)// ture，设置他为一个正在进行的通知。他们通常是用来表示一个后台任务,用户积极参与(如播放音乐)或以某种方式正在等待,因此占用设备(如一个文件下载,同步操作,主动网络连接)
+                .setDefaults(Notification.DEFAULT_VIBRATE)// 向通知添加声音、闪灯和振动效果的最简单、最一致的方式是使用当前的用户默认设置，使用defaults属性，可以组合
+                // Notification.DEFAULT_ALL Notification.DEFAULT_SOUND 添加声音 // requires VIBRATE permission
+                .setSmallIcon(R.drawable.ic_launcher);// 设置通知小ICON
+
+        mBuilder.setAutoCancel(true).setContentTitle(title).setContentText(message).setTicker("来自随缘吧的缘分");
+        Intent resultIntent = new Intent(context, MainActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pendingIntent);
+        mNotificationManager.notify(100, mBuilder.build());
+    }
+
+    public PendingIntent getDefalutIntent(int flags, Context context) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, new Intent(), flags);
+        return pendingIntent;
+    }
+
+    // 判断前台后台运行
+    public static boolean isBackground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        if (appProcesses.size() > 0) {
+            RunningAppProcessInfo appProcess = appProcesses.get(0);
+            if (appProcess.processName.equals(context.getPackageName())) {
+                Log.i("前台", appProcess.processName);
+                return false;
+            } else {
+                Log.i("后台", appProcess.processName);
+                return true;
+            }
+
+        }
+        return false;
+    }
 
     private void showRedPoint() {
         // 红点提示
@@ -350,10 +411,10 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                     chatMessage.setNickname("有缘人");
                     chatMessage.setSeconds(Float.parseFloat(seconds));
                     chatMessage.setVoicePath(voiceFile.getAbsolutePath());
-                    
+
                     // 构建消息
                     String voiceSecondsStr = String.valueOf(seconds);
-                    String message = "语音消息: " + voiceSecondsStr.substring(0,4) + "秒(点击播放)";
+                    String message = "语音消息: " + voiceSecondsStr.substring(0, 4) + "秒(点击播放)";
                     chatMessage.setMessage(message);
 
                     new Handler(MainTab01.activity.getMainLooper()).post(new Runnable() {
@@ -461,23 +522,12 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
                 "通知点击 title=\"" + title + "\" description=\"" + description + "\" customContent=" + customContentString;
         Log.d(TAG, notifyString);
 
-        // 自定义内容获取方式，mykey和myvalue对应通知推送时自定义内容中设置的键和值
-        if (!TextUtils.isEmpty(customContentString)) {
-            JSONObject customJson = null;
-            try {
-                customJson = new JSONObject(customContentString);
-                String myvalue = null;
-                if (!customJson.isNull("mykey")) {
-                    myvalue = customJson.getString("mykey");
-                }
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        // Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-        updateContent(context, notifyString);
+        // 点击通知之后打开当前应用或者显示当前应用
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.setClass(context, SplashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        context.startActivity(intent);
     }
 
     /**
