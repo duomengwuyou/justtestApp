@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
  */
 public class ChatConstant {
     public static final String IP_PORT = "http://101.200.127.223:8082/";
+    //public static final String IP_PORT = "http://172.20.200.239:8890/";
     public static final String DEFAULT_STR = "";
 
     public static final String PIC = "图片";
@@ -27,6 +28,7 @@ public class ChatConstant {
     public static final String MORE_NEWS = "morenews";
     public static final String NEWS_CRAWL_TYPE = "newscrawltypes";
     public static final String UPLOAD_APP_INFO = "upload";
+    public static final String TICKER_INFO = "ticker";
 
     public static final Map<String, String> PATH_MAP = new HashMap<String, String>();
     static {
@@ -37,6 +39,7 @@ public class ChatConstant {
         PATH_MAP.put(MORE_NEWS, "morenews?");
         PATH_MAP.put(NEWS_CRAWL_TYPE, "newscrawltypes?");
         PATH_MAP.put(UPLOAD_APP_INFO, "appinfo/upload?");
+        PATH_MAP.put(TICKER_INFO, "appinfo/ticker?");
     }
 
 }

@@ -113,6 +113,55 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
             PushApplication.USER_ID = userId;
         }
         GetNetIp();
+        // 心跳
+        ticker();
+    }
+
+    public static void ticker() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(1000 * 10);
+                    while (true) {
+                        Thread.sleep(1000 * 60);
+                        uploadTickerinfo();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+
+                }
+            }
+        });
+        t.start();
+    }
+
+    public static void uploadTickerinfo() {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    String phoneIp = URLEncoder.encode(PushApplication.phoneIp, "utf-8");
+                    String parameters = "ip=" + phoneIp + "&channelId=" + PushApplication.MY_CHANNEL_ID;
+                    String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.TICKER_INFO);
+                    URL url = new URL(path + parameters);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(6 * 1000);
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-type", "text/html");
+                    connection.setRequestProperty("Accept-Charset", "utf-8");
+                    connection.setRequestProperty("contentType", "utf-8");
+                    connection.setUseCaches(false);
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        InputStream in = connection.getInputStream();
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("error");
+                } finally {
+
+                }
+            }
+        });
+        t.start();
     }
 
     public static void GetNetIp() {
