@@ -35,21 +35,28 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.baidu.android.pushservice.PushConstants;
-import com.baidu.android.pushservice.PushManager;
 import com.jauker.widget.BadgeView;
 import com.zboss.suiyuan.bean.Message;
 import com.zboss.suiyuan.chat.ConnectServer;
 import com.zboss.suiyuan.enums.TitleEnum;
 import com.zboss.suiyuan.utils.SendMsgAsyncTask;
 
+/**
+ * 主页面
+ * 
+ * @author xinglong
+ *
+ */
 public class MainActivity extends FragmentActivity {
     public static ViewPager mViewPager;
     private static FragmentPagerAdapter mAdapter;
     private static List<Fragment> mFragments = new ArrayList<Fragment>();
 
+    // 聊天
     public static LinearLayout mTabLiaotian;
+    // 图片
     public static LinearLayout mTabFaxian;
+    // 文章
     public static LinearLayout mTabTongxunlu;
 
     private static TextView mLiaotian;
@@ -60,12 +67,14 @@ public class MainActivity extends FragmentActivity {
     public static BadgeView mBadgeViewforFaxian;
     public static BadgeView mBadgeViewforTongxunlu;
 
+    // 页面上部的滚动条
     private static ImageView mTabLine;
 
-    // 设置图表
+    // 设置按钮
     public static ImageView setImage;
     public static ImageView newsSet;
     public static ImageView liaotianset;
+
     public static Button enterChat;
 
     public static int currentIndex;
@@ -76,7 +85,7 @@ public class MainActivity extends FragmentActivity {
     private NewsRadioOnClick newsRadioOnClick = new NewsRadioOnClick(1);
     private static ListView areaRadioListView;
     private static ListView newsRadioListView;
-    
+
     private static FaxianClick faxianClickListener;
     private static LiaotianClick liaotianClickListener;
     private static TongxunluClick tongxunluClickListener;
@@ -86,12 +95,13 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
-        
 
         // 实例化视图
         initView();
-        // 初始化tab line长度
+
+        // 初始化上部滚动条长度
         initTabLine();
 
         mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -104,12 +114,11 @@ public class MainActivity extends FragmentActivity {
             public Fragment getItem(int arg0) {
                 return mFragments.get(arg0);
             }
-            
         };
 
         // 设置碎片适配器
         mViewPager.setAdapter(mAdapter);
-        
+
         faxianClickListener = new FaxianClick();
         liaotianClickListener = new LiaotianClick();
         tongxunluClickListener = new TongxunluClick();
@@ -118,26 +127,31 @@ public class MainActivity extends FragmentActivity {
         // 页面改变的时候触发事件
         mViewPager.setOnPageChangeListener(pageChangeLister);
 
+        // 设置点击切换事件
         mTabLiaotian.setOnClickListener(liaotianClickListener);
         mFaxian.setOnClickListener(faxianClickListener);
         mTongxunlu.setOnClickListener(tongxunluClickListener);
 
+        // 图片和新闻图表时间
         setImage.setOnClickListener(new RadioClickListener());
         newsSet.setOnClickListener(new NewsRadioClickListener());
         liaotianset.setOnClickListener(new FindMore());
 
         // 默认选择第一个标签
         mViewPager.setCurrentItem(0);
-        
+
         // 显示帮助提示
-        if(!PushApplication.showHelpOrNot) {
+        if (!PushApplication.showHelpOrNot) {
             showHelper(this);
         }
     }
-    
-    
-    
 
+    /**
+     * 页面切换时的响应事件
+     * 
+     * @author xinglong
+     *
+     */
     class PageOnPageChangeListener implements OnPageChangeListener {
         @Override
         public void onPageSelected(int position) {
@@ -156,10 +170,8 @@ public class MainActivity extends FragmentActivity {
                     break;
                 case 1:
                     mFaxian.setTextColor(getResources().getColor(R.color.green));
-
                     mTabFaxian.removeView(mBadgeViewforFaxian);
                     mBadgeViewforFaxian.setBadgeCount(0);
-                    // mTabFaxian.addView(mBadgeViewforFaxian);
 
                     // 隐藏图标
                     enterChat.setVisibility(View.GONE);
@@ -182,6 +194,9 @@ public class MainActivity extends FragmentActivity {
             currentIndex = position;
         }
 
+        /**
+         * 页面滚动时候的响应时间
+         */
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             if (currentIndex == 0 && position == 0)// 0->1
@@ -235,32 +250,39 @@ public class MainActivity extends FragmentActivity {
         }
 
     }
-    
-    class FaxianClick implements OnClickListener{
+
+    // 点击切换动作
+    class FaxianClick implements OnClickListener {
         @Override
         public void onClick(View v) {
             mViewPager.setCurrentItem(1);
             return;
         }
     }
-    
-    class LiaotianClick implements OnClickListener{
+
+    class LiaotianClick implements OnClickListener {
         @Override
         public void onClick(View v) {
             mViewPager.setCurrentItem(0);
             return;
         }
     }
-    
-    class TongxunluClick implements OnClickListener{
+
+    class TongxunluClick implements OnClickListener {
         @Override
         public void onClick(View v) {
             mViewPager.setCurrentItem(2);
             return;
         }
     }
-    
-    class FindMore implements OnClickListener{
+
+    /**
+     * 查看更多图片（跳转到指定网址）
+     * 
+     * @author xinglong
+     *
+     */
+    class FindMore implements OnClickListener {
         @Override
         public void onClick(View v) {
             AlertDialog.Builder builder = new Builder(MainActivity.this);
@@ -270,8 +292,8 @@ public class MainActivity extends FragmentActivity {
             builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    Uri uri = Uri.parse("http://www.suiyuan521.com/");  
-                    Intent it = new Intent(Intent.ACTION_VIEW, uri);  
+                    Uri uri = Uri.parse("http://www.suiyuan521.com/");
+                    Intent it = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(it);
                 }
             });
@@ -313,6 +335,12 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    /**
+     * 点击新闻选择按钮
+     * 
+     * @author xinglong
+     *
+     */
     class NewsRadioClickListener implements OnClickListener {
         @Override
         public void onClick(View v) {
@@ -335,7 +363,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     /**
-     * 点击单选框事件
+     * 选择图片种类
      * 
      * @author xmz
      * 
@@ -370,6 +398,12 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    /**
+     * 选择新闻种类
+     * 
+     * @author xinglong
+     *
+     */
     class NewsRadioOnClick implements DialogInterface.OnClickListener {
         private int index;
 
@@ -400,7 +434,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    // 设置tab line的宽度为屏幕的三分之一
+    // 设置tabline的宽度为屏幕的三分之一
     private void initTabLine() {
         mTabLine = (ImageView) findViewById(R.id.id_tab_line);
         // 获取屏幕宽度 除以3 设置为tabline的宽度
@@ -412,7 +446,7 @@ public class MainActivity extends FragmentActivity {
         mTabLine.setLayoutParams(lp);
     }
 
-    // 重设textview字体颜色为黑色
+    // 重设字体为黑色
     protected void resetTextView() {
         mLiaotian.setTextColor(getResources().getColor(R.color.black));
         mFaxian.setTextColor(getResources().getColor(R.color.black));
@@ -458,7 +492,7 @@ public class MainActivity extends FragmentActivity {
         }
         return false;
     }
-    
+
     public void showHelper(Context context) {
         AlertDialog.Builder builder = new Builder(context);
         builder.setMessage("1、通过右上角的『连接』按钮来建立会话或者断开会话。\n 2、左下角『语音』按钮发送语音信息。\n 3、右下角按钮用于控制发送文字和图片。\n 欢迎使用随缘吧！");
@@ -489,9 +523,10 @@ public class MainActivity extends FragmentActivity {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 // 关闭连接
-                if((PushApplication.YOUR_CHANNEL_ID != null) && (PushApplication.MY_CHANNEL_ID != PushApplication.YOUR_CHANNEL_ID)) {
+                if ((PushApplication.YOUR_CHANNEL_ID != null)
+                        && (PushApplication.MY_CHANNEL_ID != PushApplication.YOUR_CHANNEL_ID)) {
                     closeConnection();
-                }else{
+                } else {
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }
@@ -512,7 +547,8 @@ public class MainActivity extends FragmentActivity {
         String JSONDataUrl =
                 ConnectServer.getCloseCon(PushApplication.APP_ID, PushApplication.USER_ID,
                         PushApplication.MY_CHANNEL_ID);
-        final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "断开与有缘人联系...", "请稍等...", true, false);
+        final ProgressDialog progressDialog =
+                ProgressDialog.show(MainActivity.this, "断开与有缘人联系...", "请稍等...", true, false);
 
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(Request.Method.GET, JSONDataUrl, null, new Response.Listener<JSONObject>() {

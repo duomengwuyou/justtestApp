@@ -1,8 +1,5 @@
 package com.zboss.suiyuan;
 
-import com.baidu.android.pushservice.PushConstants;
-import com.baidu.android.pushservice.PushManager;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +7,12 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.widget.TextView;
 
+/**
+ * 闪屏页
+ * 
+ * @author xinglong
+ *
+ */
 public class SplashActivity extends Activity {
 
     private MyCountDownTimer mc;
@@ -20,10 +23,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_main);
-        // 初始化百度推送
-        // 消息推送
-        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, PushApplication.API_KEY);
-        
+
         tv = (TextView) findViewById(R.id.timetiker);
         mc = new MyCountDownTimer(3000, 1000);
         mc.start();
