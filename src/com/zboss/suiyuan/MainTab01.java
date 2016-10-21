@@ -139,7 +139,7 @@ public class MainTab01 extends Fragment {
             // 用于接收录音信息
             voicePath = data.getStringExtra(VoiceActivity.KEY_VOICE_PATH);
             voiceSecondes = data.getFloatExtra(VoiceActivity.KEY_VOICE_SECONDS, 1f);
-            if(voiceSecondes > 180) {
+            if (voiceSecondes > 180) {
                 Toast.makeText(activity, "语音太长，无法发送！", Toast.LENGTH_SHORT).show();
             } else {
                 sendVoice(voicePath, voiceSecondes);
@@ -291,6 +291,7 @@ public class MainTab01 extends Fragment {
      */
     private void initEvent() {
 
+        // 发送语音按钮
         voiceBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -307,8 +308,8 @@ public class MainTab01 extends Fragment {
             }
         });
 
+        // 文本框变化事件
         mMsgInput.addTextChangedListener(new TextWatcher() {
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String input = mMsgInput.getText().toString();

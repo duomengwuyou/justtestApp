@@ -8,10 +8,17 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
 
+/**
+ * 异步发送消息
+ * 
+ * @author xinglong
+ *
+ */
 public class SendMsgAsyncTask {
     private BaiduPush mBaiduPush;
-    private String mMessage;
     private Handler mHandler;
+    
+    private String mMessage;
     private MyAsyncTask mTask;
     private String mUserId;
     private OnSendScuessListener mListener;
@@ -25,7 +32,6 @@ public class SendMsgAsyncTask {
     }
 
     Runnable reSend = new Runnable() {
-
         @Override
         public void run() {
             // TODO Auto-generated method stub
@@ -33,14 +39,7 @@ public class SendMsgAsyncTask {
             send();// 重发
         }
     };
-
-    public SendMsgAsyncTask(String jsonMsg, String useId) {
-        mBaiduPush = PushApplication.getInstance().getBaiduPush();
-        mMessage = jsonMsg;
-        mUserId = useId;
-        mHandler = new Handler();
-    }
-
+    
     // 发送
     public void send() {
         if (NetUtil.isNetConnected(PushApplication.getInstance())) {// 如果网络可用
@@ -51,12 +50,26 @@ public class SendMsgAsyncTask {
         }
     }
 
+    public SendMsgAsyncTask(String jsonMsg, String useId) {
+        mBaiduPush = PushApplication.getInstance().getBaiduPush();
+        mMessage = jsonMsg;
+        mUserId = useId;
+        mHandler = new Handler();
+    }
+
+
     // 停止
     public void stop() {
         if (mTask != null)
             mTask.cancel(true);
     }
 
+    /**
+     * 异步任务
+     * 
+     * @author xinglong
+     *
+     */
     class MyAsyncTask extends AsyncTask<Void, Void, String> {
 
         @Override

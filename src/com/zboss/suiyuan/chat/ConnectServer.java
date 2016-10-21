@@ -59,19 +59,6 @@ public class ConnectServer {
         return null;
     }
 
-    /**
-     * 上传信息
-     * 
-     * @param appid
-     * @param userId
-     * @param channelId
-     */
-    public static void uploadInfo(String appid, String userId, String channelId) {
-        String parameters = "appid=" + appid + "&userId=" + userId + "&channelId=" + channelId;
-        String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.UPLOADINFO) + parameters;
-        ConnectServer.httpUrlConnection(path, ChatConstant.DEFAULT_STR);
-    }
-
     public static String getUploadInfoPath(String appid, String userId, String channelId) {
         String parameters = "appid=" + appid + "&userId=" + userId + "&channelId=" + channelId;
         String path = ChatConstant.IP_PORT + ChatConstant.PATH_MAP.get(ChatConstant.UPLOADINFO) + parameters;

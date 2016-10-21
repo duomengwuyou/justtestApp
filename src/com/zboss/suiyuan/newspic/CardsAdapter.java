@@ -1,6 +1,5 @@
 package com.zboss.suiyuan.newspic;
 
-
 import java.util.List;
 
 import com.android.volley.RequestQueue;
@@ -23,11 +22,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * 图片显示页面adapter
+ * 
+ * @author xinglong
+ *
+ */
 public class CardsAdapter extends BaseAdapter {
 
     private List<PictureObj> items;
     private final Context context;
-    
+
     public static RequestQueue requestQueue;
     public static LruCache<String, Bitmap> lruCache;
     public static ImageCache imageCache;
@@ -38,7 +43,7 @@ public class CardsAdapter extends BaseAdapter {
         this.items = items;
         requestQueue = Volley.newRequestQueue(context);
         lruCache = new LruCache<String, Bitmap>(200);
-        
+
         imageCache = new ImageCache() {
             @Override
             public void putBitmap(String key, Bitmap value) {
@@ -50,7 +55,7 @@ public class CardsAdapter extends BaseAdapter {
                 return lruCache.get(key);
             }
         };
-        
+
         imageLoader = new ImageLoader(requestQueue, imageCache);
 
     }
@@ -101,12 +106,12 @@ public class CardsAdapter extends BaseAdapter {
         // Load the image and set it on the ImageView
         final String imageUrl = items.get(position).getPic();
         showImageByNetworkImageView(holder.Card_Pic, imageUrl);
-        
+
         holder.Card_Pic.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, SinglePic.class);
-                intent.putExtra("imagePath", imageUrl); 
+                intent.putExtra("imagePath", imageUrl);
                 context.startActivity(intent);
             }
         });
@@ -117,7 +122,7 @@ public class CardsAdapter extends BaseAdapter {
         private TextView Card_Title;
         private NetworkImageView Card_Pic;
     }
-    
+
     /**
      * 利用NetworkImageView显示网络图片
      */
