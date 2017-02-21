@@ -3,7 +3,6 @@ package com.zboss.suiyuan.bean;
 /**
  * 展示内容 新闻或图片
  * 
- * @author baidu
  *
  */
 public class DisplayItem {
